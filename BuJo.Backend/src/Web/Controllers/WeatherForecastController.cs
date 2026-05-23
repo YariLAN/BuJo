@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace BuJo.Host.Controllers;
+namespace BuJo.Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]

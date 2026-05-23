@@ -1,4 +1,4 @@
-namespace BuJo.Host;
+namespace BuJo.Web;
 
 public class WeatherForecast
 {
