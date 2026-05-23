@@ -5,6 +5,7 @@ namespace BuJo.Domain.Habits;
 public sealed class Habit
 {
     private User? _user;
+    private List<HabitLog> _logs = [];
     
     private Habit(Guid id, Guid userId, string name, bool isArchived, DateTimeOffset createdAt)
     {
@@ -21,18 +22,24 @@ public sealed class Habit
     
     public Guid UserId { get; private set; }
     
+    public User User
+    {
+        get => throw new ArgumentNullException($"Пользователь не может быть null");
+        private set => _user = value;
+    }
+    
     public bool IsArchived { get; private set; }
     
     public DateTimeOffset CreatedAt { get; private set; }
     
     public DateTimeOffset UpdatedAt { get; private set; }
 
-    public User User
+    public IReadOnlyList<HabitLog> Logs
     {
-        get => throw new ArgumentNullException($"Пользователь не может быть null");
-        private set => _user = value;
+        get => _logs;
+        private set => _logs = value.ToList();
     }
-
+    
     public static Habit Create(Guid userId, string name)
     {
         var now = DateTimeOffset.Now;

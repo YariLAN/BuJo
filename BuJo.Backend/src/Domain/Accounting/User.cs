@@ -8,6 +8,7 @@ namespace BuJo.Domain.Accounting;
 public sealed class User
 {
     private List<Habit> _habits = [];
+    private List<Task> _tasks = [];
     
     private User(Guid id, string telegramId, string name, DateTimeOffset createdAt)
     {
@@ -37,6 +38,12 @@ public sealed class User
     {
         get => _habits;
         private set => _habits = value.ToList();
+    }
+
+    public IReadOnlyList<Task> Tasks
+    {
+        get => _tasks;
+        private set => _tasks = value.ToList();
     }
 
     public TimeOnly SetReminderMorning(TimeOnly morningTime) => (TimeOnly)(ReminderMorningTime = morningTime);    

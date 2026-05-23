@@ -2,13 +2,15 @@ namespace BuJo.Domain.Habits;
 
 public sealed class HabitLog
 {
-    public HabitLog(Guid id, Guid habitId, DateOnly date, bool isCompleted)
+    private HabitLog(Guid id, Guid habitId, DateOnly date, bool isCompleted)
     {
         Id = id;
         HabitId = habitId;
         Date = date;
         IsCompleted = isCompleted;
     }
+
+    public HabitLog() {}
     
     public Guid Id { get; private set; }
     
