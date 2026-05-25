@@ -8,6 +8,13 @@ internal sealed class HabitConfiguration : IEntityTypeConfiguration<Habit>
 {
     public void Configure(EntityTypeBuilder<Habit> builder)
     {
-        throw new NotImplementedException();
+        builder.HasKey(h => h.Id);
+
+        builder.HasOne(h => h.User)
+            .WithMany(u => u.Habits)
+            .HasForeignKey(h => h.UserId);
+
+        builder.Property(h => h.IsArchived)
+            .HasDefaultValue(false);
     }
 }

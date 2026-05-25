@@ -1,3 +1,4 @@
+using BuJo.Data;
 using BuJo.Web;
 using Scalar.AspNetCore;
 
@@ -9,7 +10,9 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddWeb();
+        builder.Services
+            .AddData(builder.Configuration)
+            .AddWeb();
         
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();

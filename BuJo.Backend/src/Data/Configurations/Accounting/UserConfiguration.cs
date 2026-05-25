@@ -8,6 +8,9 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {
-        throw new NotImplementedException();
+        builder.HasKey(u => u.Id);
+
+        builder.HasIndex(u => u.TelegramId)
+            .IsUnique();
     }
 }

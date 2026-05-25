@@ -1,11 +1,36 @@
 using System.Reflection;
+using BuJo.Domain.Accounting;
+using BuJo.Domain.Habits;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+
+using TaskItem = BuJo.Domain.Tasks.Task;
 
 namespace BuJo.Data;
 
 public sealed class DataContext : DbContext
 {
+    private readonly IReadOnlyList<IInterceptor> _interceptors;
 
+    public DataContext(
+        DbContextOptions<DataContext> options,
+        IReadOnlyList<IInterceptor> interceptors)
+        : base(options)
+    {
+        _interceptors = interceptors;
+        ChangeTracker.DeleteOrphansTiming = CascadeTiming.OnSaveChanges;
+        ChangeTracker.CascadeDeleteTiming = CascadeTiming.OnSaveChanges;
+    }
+
+    public DbSet<User> Users => Set<User>();
+
+    public DbSet<Habit> Habits => Set<Habit>();
+
+    public DbSet<TaskItem> Tasks => Set<TaskItem>();
+    
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        => optionsBuilder.AddInterceptors(_interceptors);
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

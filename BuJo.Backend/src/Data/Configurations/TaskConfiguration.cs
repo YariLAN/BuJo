@@ -9,5 +9,9 @@ internal sealed class TaskConfiguration : IEntityTypeConfiguration<Task>
     public void Configure(EntityTypeBuilder<Task> builder)
     {
         builder.HasKey(t => t.Id);
+
+        builder.HasOne(t => t.User)
+            .WithMany(u => u.Tasks)
+            .HasForeignKey(t => t.UserId);
     }
 }

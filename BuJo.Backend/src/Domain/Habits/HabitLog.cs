@@ -2,6 +2,8 @@ namespace BuJo.Domain.Habits;
 
 public sealed class HabitLog
 {
+    private Habit? _habit;
+    
     private HabitLog(Guid id, Guid habitId, DateOnly date, bool isCompleted)
     {
         Id = id;
@@ -15,6 +17,12 @@ public sealed class HabitLog
     public Guid Id { get; private set; }
     
     public Guid HabitId { get; private set; }
+
+    public Habit Habit
+    {
+        get => _habit ?? throw new ArgumentNullException($"{nameof(Habit)} не может быть null");
+        private set => _habit = value;
+    }
     
     public DateOnly Date { get; private set; }
     

@@ -6,7 +6,7 @@ public sealed class Task
 {
     private User? _user;
     
-    public Task(Guid id, Guid userId, string title, TaskStatus status, DateTimeOffset createdAt)
+    private Task(Guid id, Guid userId, string title, TaskStatus status, DateTimeOffset createdAt)
     {
         Id = id;
         UserId = userId;
@@ -14,6 +14,8 @@ public sealed class Task
         Status = status;
         CreatedAt = createdAt;
     }
+    
+    public Task() {}
 
     public Guid Id { get; private set; }
     

@@ -8,6 +8,10 @@ internal sealed class HabitLogConfiguration : IEntityTypeConfiguration<HabitLog>
 {
     public void Configure(EntityTypeBuilder<HabitLog> builder)
     {
-        throw new NotImplementedException();
+        builder.HasKey(hl => hl.Id);
+
+        builder.HasOne(hl => hl.Habit)
+            .WithMany(h => h.Logs)
+            .HasForeignKey(hl => hl.HabitId);
     }
 }

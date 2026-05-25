@@ -16,6 +16,8 @@ public sealed class Habit
         Id = id;
     }
 
+    public Habit() {}
+    
     public Guid Id { get; private set; }
     
     public string Name { get; private set; }
