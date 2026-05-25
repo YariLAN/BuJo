@@ -15,10 +15,10 @@ public sealed class DataContext : DbContext
 
     public DataContext(
         DbContextOptions<DataContext> options,
-        IReadOnlyList<IInterceptor> interceptors)
+        IEnumerable<IInterceptor> interceptors)
         : base(options)
     {
-        _interceptors = interceptors;
+        _interceptors = interceptors.ToList();
         ChangeTracker.DeleteOrphansTiming = CascadeTiming.OnSaveChanges;
         ChangeTracker.CascadeDeleteTiming = CascadeTiming.OnSaveChanges;
     }

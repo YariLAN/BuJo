@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using BuJo.Data;
 using BuJo.Web;
 using Scalar.AspNetCore;
@@ -6,7 +7,7 @@ namespace BuJo.Host;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ public class Program
         builder.Services.AddOpenApi();
 
         var app = builder.Build();
+
+        await MigrateDatabase(app);
         
         if (app.Environment.IsDevelopment())
         {
@@ -31,6 +34,13 @@ public class Program
         
         app.MapControllers();
 
-        app.Run();
+        await app.RunAsync();
+    }
+    
+    private static async Task MigrateDatabase(IHost host)
+    {
+        await using var scope = host.Services.CreateAsyncScope();
+        await using var dataContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+        await dataContext.MigrateAsync();
     }
 }
