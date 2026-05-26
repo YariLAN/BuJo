@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using BuJo.Data;
+using BuJo.Integrations.Telegram;
 using BuJo.Web;
 using Scalar.AspNetCore;
 
@@ -13,7 +14,8 @@ public class Program
 
         builder.Services
             .AddData(builder.Configuration)
-            .AddWeb();
+            .AddWeb()
+            .AddTelegram(builder.Configuration);
         
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();

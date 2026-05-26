@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Data\Data.csproj" />
+      <ProjectReference Include="..\Integrations\Telegram\Telegram.csproj" />
       <ProjectReference Include="..\Web\Web.csproj" />
     </ItemGroup>
 
