@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using BuJo.Application;
 using BuJo.Data;
 using BuJo.Integrations.Telegram;
 using BuJo.TelegramBot;
@@ -14,8 +15,9 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services
-            .AddData(builder.Configuration)
             .AddWeb()
+            .AddApplication()
+            .AddData(builder.Configuration)
             .AddTelegramBot(builder.Configuration);
         
         builder.Services.AddControllers();

@@ -1,3 +1,5 @@
+using BuJo.Application.Accounting;
+using BuJo.Data.Repositories.Accounting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +10,9 @@ public static class ServiceRegistry
 {
     public static IServiceCollection AddData(this IServiceCollection services, IConfiguration configuration)
     {
-        return services.AddContext(configuration);
+        return services
+            .AddContext(configuration)
+            .AddRepositories();
     }
     
     private static IServiceCollection AddContext(this IServiceCollection services, IConfiguration configuration)
@@ -30,6 +34,13 @@ public static class ServiceRegistry
             builder.UseSnakeCaseNamingConvention();
         });
 
+        return services;
+    }
+
+    private static IServiceCollection AddRepositories(this IServiceCollection services)
+    {
+        services.AddTransient<IUserRepository, UserRepository>();
+        
         return services;
     }
 }

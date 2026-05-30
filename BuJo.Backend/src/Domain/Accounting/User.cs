@@ -3,7 +3,7 @@ using BuJo.Domain.Habits;
 namespace BuJo.Domain.Accounting;
 
 /// <summary>
-/// Данные пользователя
+/// Пользователь
 /// </summary>
 public sealed class User
 {
@@ -52,7 +52,7 @@ public sealed class User
     
     public static User Create(string telegramId, string name)
     {
-        var now = DateTimeOffset.Now;
+        var now = DateTimeOffset.UtcNow;
         return new User(Guid.NewGuid(), telegramId, name, now)
         {
             UpdatedAt = now

@@ -23,7 +23,7 @@ public sealed class Task
     
     public User User
     {
-        get => throw new ArgumentNullException($"Пользователь не может быть null");
+        get => _user ?? throw new ArgumentNullException($"Пользователь не может быть null");
         private set => _user = value;
     }
     
@@ -33,16 +33,42 @@ public sealed class Task
     
     public TaskStatus Status { get; private set; }
     
+    /// <summary>
+    /// Дата-время начала задачи
+    /// </summary>
+    public DateTimeOffset? StartDateTime { get; private set; }
+    
+    /// <summary>
+    /// Дата-время конца задачи или дэдлайн
+    /// </summary>
     public DateTimeOffset? DueDateTime { get; private set; }
+    
+    /// <summary>
+    /// Дата-время напоминания о задаче
+    /// </summary>
+    public DateTimeOffset? ReminderAt { get; private set; }
+    
+    /// <summary>
+    /// Было ли напоминание о задаче
+    /// </summary>
+    public bool IsSentReminder { get; private set; } 
     
     public DateTimeOffset CreatedAt { get; private set; }
 
     public void ChangeStatus(TaskStatus status) => Status = status;
     
-    public static Task Create(Guid userId, string title, string? description, DateTimeOffset? dueDate)
+    public static Task Create(
+        Guid userId, 
+        string title, 
+        string? description = null, 
+        DateTimeOffset? startDate = null, 
+        DateTimeOffset? dueDate = null,
+        DateTimeOffset? reminderAt = null)
         => new(Guid.NewGuid(), userId, title, TaskStatus.ToDo, DateTimeOffset.Now)
         {
             Description = description, 
+            StartDateTime = startDate,
             DueDateTime = dueDate,
+            ReminderAt = reminderAt,
         };
 }
