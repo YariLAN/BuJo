@@ -6,19 +6,19 @@ using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace BuJo.Integrations.Telegram.Pollings;
+namespace BuJo.TelegramBot.Workers;
 
-internal sealed class BotWatcherWorker(
-    ITelegramBotClient botClient,
+public sealed class TelegramPollingWorker(
     IServiceProvider serviceProvider,
-    ILogger<BotWatcherWorker> logger) : BackgroundService
+    ILogger<TelegramPollingWorker> logger,
+    ITelegramBotClient botClient) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
         var receiverOptions = new ReceiverOptions
         {
             AllowedUpdates = [UpdateType.Message, UpdateType.CallbackQuery],
-            DropPendingUpdates = true  // игнорировать сообщения пока бот был оффлайн
+            DropPendingUpdates = true 
         };
 
         logger.LogInformation("Telegram bot polling started");

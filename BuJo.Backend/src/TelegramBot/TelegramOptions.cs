@@ -1,12 +1,12 @@
 using BuJo.Common.Extensions.Configurations;
 
-namespace BuJo.Integrations.Telegram;
+namespace BuJo.TelegramBot;
 
 public sealed class TelegramOptions : IHaveConfigSection
 {
     public static string SectionName => "Telegram";
     
-    public string? Token { get; set; }
+    public string? Token { get; init; }
 
     public string TokenRequired => Token ?? throw new ArgumentNullException();
 }

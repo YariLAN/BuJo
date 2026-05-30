@@ -1,9 +1,9 @@
-using BuJo.Integrations.Telegram.Handlers;
+using BuJo.TelegramBot.Handlers;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace BuJo.Integrations.Telegram.Pollings;
+namespace BuJo.TelegramBot;
 
 internal sealed class UpdateDispatcher(
     IEnumerable<ICommandHandler> commandHandlers,
