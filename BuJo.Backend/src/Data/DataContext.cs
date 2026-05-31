@@ -25,6 +25,8 @@ public sealed class DataContext : DbContext
 
     public DbSet<User> Users => Set<User>();
 
+    public DbSet<UserBotState> UserBotStates => Set<UserBotState>();
+
     public DbSet<Habit> Habits => Set<Habit>();
 
     public DbSet<TaskItem> Tasks => Set<TaskItem>();

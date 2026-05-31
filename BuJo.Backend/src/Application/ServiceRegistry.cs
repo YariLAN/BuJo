@@ -8,6 +8,7 @@ public static class ServiceRegistry
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
         services.AddTransient<IUserService, UserService>();
+        services.AddTransient<IUserBotStateService, UserBotStateService>();
 
         return services;
     }

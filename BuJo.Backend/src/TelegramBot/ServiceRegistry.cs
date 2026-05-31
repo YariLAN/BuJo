@@ -1,5 +1,8 @@
 using BuJo.TelegramBot.Handlers;
+using BuJo.TelegramBot.Handlers.Callbacks;
 using BuJo.TelegramBot.Handlers.Commands;
+using BuJo.TelegramBot.Handlers.Messages;
+using BuJo.TelegramBot.Services;
 using BuJo.TelegramBot.Workers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,18 +15,27 @@ public static class ServiceRegistry
     public static IServiceCollection AddTelegramBot(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOptions<TelegramOptions>().BindConfiguration(TelegramOptions.SectionName);
-        
+
         var options = configuration
                           .GetRequiredSection(TelegramOptions.SectionName)
-                          .Get<TelegramOptions>() 
+                          .Get<TelegramOptions>()
                       ?? throw new ArgumentNullException();
-        
+
         services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(options.TokenRequired));
-        
+
         services.AddHostedService<TelegramPollingWorker>();
 
         services.AddScoped<UpdateDispatcher>();
+
+        services.AddScoped<MenuRenderer>();
+        services.AddScoped<IMenuService, MenuService>();
+        services.AddScoped<ISettingsMenuService, SettingsMenuService>();
+
         services.AddScoped<ICommandHandler, StartCommandHandler>();
+        services.AddScoped<ICallbackHandler, MenuCallbackHandler>();
+
+        services.AddScoped<PendingActionMessageHandler>();
+        services.AddScoped<IPendingInputHandler, ReminderTimeInputHandler>();
 
         return services;
     }

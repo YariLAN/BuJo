@@ -10,21 +10,21 @@ public sealed class User
     private List<Habit> _habits = [];
     private List<Tasks.Task> _tasks = [];
     
-    private User(Guid id, string telegramId, string name, DateTimeOffset createdAt)
+    private User(Guid id, string telegramId, string? name, DateTimeOffset createdAt)
     {
         Id = id;
         TelegramId = telegramId;
         Name = name;
         CreatedAt = createdAt;
     }
-    
+
     public User() {}
 
     public Guid Id { get; private set; }
-    
+
     public string TelegramId { get; private set; }
-    
-    public string Name { get; private set; }
+
+    public string? Name { get; private set; }
     
     public TimeOnly? ReminderMorningTime { get; private set; }
     
@@ -46,11 +46,24 @@ public sealed class User
         private set => _tasks = value.ToList();
     }
 
-    public TimeOnly SetReminderMorning(TimeOnly morningTime) => (TimeOnly)(ReminderMorningTime = morningTime);    
-    
-    public TimeOnly SetReminderEvening(TimeOnly eveningTime) => (TimeOnly)(ReminderEveningTime = eveningTime);
-    
-    public static User Create(string telegramId, string name)
+    public void SetReminder(ReminderKind kind, TimeOnly time)
+    {
+        switch (kind)
+        {
+            case ReminderKind.Morning:
+                ReminderMorningTime = time;
+                break;
+            case ReminderKind.Evening:
+                ReminderEveningTime = time;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(kind), kind, "Неизвестный тип напоминания");
+        }
+
+        UpdatedAt = DateTimeOffset.UtcNow;
+    }
+
+    public static User Create(string telegramId, string? name)
     {
         var now = DateTimeOffset.UtcNow;
         return new User(Guid.NewGuid(), telegramId, name, now)

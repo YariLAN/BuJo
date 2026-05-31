@@ -26,4 +26,13 @@ internal sealed class UserService(IUserRepository userRepository) : IUserService
 
         return user.ToResponse();
     }
+
+    public async Task SetReminderAsync(Guid userId, ReminderKind kind, TimeOnly time, CancellationToken ct = default)
+    {
+        var user = await userRepository.GetBySpecAsync(new GetUserSpecification(new GetUserQuery(userId)), ct)
+            ?? throw new InvalidOperationException($"Пользователь с Id={userId} не найден");
+
+        user.SetReminder(kind, time);
+        await userRepository.UpdateAsync(user, ct);
+    }
 }

@@ -40,7 +40,8 @@ public static class ServiceRegistry
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddTransient<IUserRepository, UserRepository>();
-        
+        services.AddTransient<IUserBotStateRepository, UserBotStateRepository>();
+
         return services;
     }
 }
