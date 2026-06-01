@@ -5,14 +5,14 @@ namespace BuJo.Application.Accounting;
 
 internal sealed class UserService(IUserRepository userRepository) : IUserService
 {
-    public async Task<UserResponse?> GetOrDefaultAsync(GetUserQuery query, CancellationToken ct = default)
+    public async Task<UserResponse?> GetOrDefaultAsync(GetUserQuery query, CancellationToken ct)
     {
         var user = await userRepository.GetBySpecAsync(new GetUserSpecification(query), ct);
 
         return user?.ToResponse();
     }
 
-    public async Task<UserResponse> CreateAsync(CreateUserCommand command, CancellationToken ct = default)
+    public async Task<UserResponse> CreateAsync(CreateUserCommand command, CancellationToken ct)
     {
         var existingUser = await userRepository.GetBySpecAsync(new GetUserSpecification(
                 new GetUserQuery(null, TelegramId: command.TelegramId)),
@@ -27,7 +27,7 @@ internal sealed class UserService(IUserRepository userRepository) : IUserService
         return user.ToResponse();
     }
 
-    public async Task SetReminderAsync(Guid userId, ReminderKind kind, TimeOnly time, CancellationToken ct = default)
+    public async Task SetReminderAsync(Guid userId, ReminderKind kind, TimeOnly time, CancellationToken ct)
     {
         var user = await userRepository.GetBySpecAsync(new GetUserSpecification(new GetUserQuery(userId)), ct)
             ?? throw new InvalidOperationException($"Пользователь с Id={userId} не найден");

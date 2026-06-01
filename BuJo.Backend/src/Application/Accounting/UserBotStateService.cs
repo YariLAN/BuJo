@@ -4,7 +4,7 @@ namespace BuJo.Application.Accounting;
 
 internal sealed class UserBotStateService(IUserBotStateRepository repository) : IUserBotStateService
 {
-    public async Task<UserBotState> GetOrCreateAsync(Guid userId, CancellationToken ct = default)
+    public async Task<UserBotState> GetOrCreateAsync(Guid userId, CancellationToken ct)
     {
         var state = await repository.GetByUserIdAsync(userId, ct);
         if (state is not null)
@@ -15,21 +15,21 @@ internal sealed class UserBotStateService(IUserBotStateRepository repository) : 
         return state;
     }
 
-    public async Task UpdateLastMenuMessageAsync(Guid userId, int messageId, CancellationToken ct = default)
+    public async Task UpdateLastMenuMessageAsync(Guid userId, int messageId, CancellationToken ct)
     {
         var state = await GetExistingAsync(userId, ct);
         state.SetLastMenuMessage(messageId);
         await repository.UpdateAsync(state, ct);
     }
 
-    public async Task SetPendingActionAsync(Guid userId, PendingAction action, string? payload, CancellationToken ct = default)
+    public async Task SetPendingActionAsync(Guid userId, PendingAction action, string? payload, CancellationToken ct)
     {
         var state = await GetExistingAsync(userId, ct);
         state.SetPendingAction(action, payload);
         await repository.UpdateAsync(state, ct);
     }
 
-    public async Task ClearPendingActionAsync(Guid userId, CancellationToken ct = default)
+    public async Task ClearPendingActionAsync(Guid userId, CancellationToken ct)
     {
         var state = await GetExistingAsync(userId, ct);
         state.ClearPendingAction();

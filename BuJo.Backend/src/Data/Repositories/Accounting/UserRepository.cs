@@ -19,7 +19,9 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
         .Include(u => u.Tasks)
         .Include(u => u.Habits);
 
-    protected override IQueryable<User> ApplySpecification(ISpecification<User> specification, bool evaluateCriteriaOnly = false)
+    protected override IQueryable<User> ApplySpecification(
+        ISpecification<User> specification, 
+        bool evaluateCriteriaOnly = false)
     {
         return SpecificationEvaluator.GetQuery(BaseQuery, specification, evaluateCriteriaOnly);
     }

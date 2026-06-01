@@ -13,16 +13,16 @@ public static class RemindersSettingsMenuBuilder
             $"""
             🔔 Настройки напоминаний
 
-            🌅 Утро: {Format(morningTime)}
-            🌙 Вечер: {Format(eveningTime)}
+            Утро: {"\t"}{Format(morningTime)}
+            Вечер: {"\t"}{Format(eveningTime)}
             """;
 
         var markup = new InlineKeyboardMarkup(new[]
         {
             new[]
             {
-                InlineKeyboardButton.WithCallbackData("🌅 Утреннее", MenuCallbacks.SettingsRemindersMorning),
-                InlineKeyboardButton.WithCallbackData("🌙 Вечернее", MenuCallbacks.SettingsRemindersEvening),
+                InlineKeyboardButton.WithCallbackData("🌅  Утреннее", MenuCallbacks.SettingsRemindersMorning),
+                InlineKeyboardButton.WithCallbackData("🌙  Вечернее", MenuCallbacks.SettingsRemindersEvening),
             },
             new[]
             {

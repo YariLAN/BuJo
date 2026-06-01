@@ -36,7 +36,9 @@ internal sealed class UpdateDispatcher(
 
     private async Task HandleCommandAsync(Message message, CancellationToken ct)
     {
-        var command = message.Text!.Split(' ')[0].ToLower();
+        var rawCommand = message.Text!.Split(' ')[0].ToLower();
+        
+        var command = rawCommand.Split('@')[0];
 
         var handler = commandHandlers.FirstOrDefault(h => h.Command == command);
 

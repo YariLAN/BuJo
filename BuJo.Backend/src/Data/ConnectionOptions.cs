@@ -6,5 +6,5 @@ public sealed class ConnectionOptions : IHaveConfigSection
 {
     public static string SectionName => "Database";
     
-    public string? ConnectionString { get; set; }
+    public string? ConnectionString { get; init; }
 }
