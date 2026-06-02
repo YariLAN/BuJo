@@ -132,9 +132,7 @@ public sealed class UserServiceTests : TestsBase
         var userId = Guid.NewGuid();
         var reminderKind = ReminderKind.Morning;
         var reminderTime = new TimeOnly(8, 0);
-        var user = AutoFixture.Build<User>()
-            .With(u => u.Id, userId)
-            .Create();
+        var user = User.Create("", "");
 
         UserRepositoryMock
             .Setup(r => r.GetBySpecAsync(It.IsAny<GetUserSpecification>(), It.IsAny<CancellationToken>()))
