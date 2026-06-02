@@ -10,12 +10,12 @@ internal sealed class UserBotStateConfiguration : IEntityTypeConfiguration<UserB
     {
         builder.HasKey(s => s.Id);
 
-        builder.HasIndex(s => s.UserId)
+        builder.HasIndex(s => new { s.UserId, s.ChatId })
             .IsUnique();
 
         builder.HasOne<User>()
-            .WithOne()
-            .HasForeignKey<UserBotState>(s => s.UserId)
+            .WithMany()
+            .HasForeignKey(s => s.UserId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

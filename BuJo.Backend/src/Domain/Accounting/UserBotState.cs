@@ -5,10 +5,11 @@ namespace BuJo.Domain.Accounting;
 /// </summary>
 public sealed class UserBotState
 {
-    private UserBotState(Guid id, Guid userId, DateTimeOffset updatedAt)
+    private UserBotState(Guid id, Guid userId, long chatId, DateTimeOffset updatedAt)
     {
         Id = id;
         UserId = userId;
+        ChatId = chatId;
         UpdatedAt = updatedAt;
     }
 
@@ -24,6 +25,11 @@ public sealed class UserBotState
     /// </summary>
     public Guid UserId { get; private set; }
 
+    /// <summary>
+    /// Идентификатор чата Telegram
+    /// </summary>
+    public long ChatId { get; private set; }
+    
     /// <summary>
     /// Идентификатор последнего сообщения с меню в чате с пользователем
     /// </summary>
@@ -47,8 +53,8 @@ public sealed class UserBotState
     /// <summary>
     /// Создать пустое состояние диалога для пользователя
     /// </summary>
-    public static UserBotState Create(Guid userId)
-        => new(Guid.NewGuid(), userId, DateTimeOffset.UtcNow);
+    public static UserBotState Create(Guid userId, long chatId)
+        => new(Guid.NewGuid(), userId, chatId, DateTimeOffset.UtcNow);
 
     /// <summary>
     /// Запомнить идентификатор сообщения с активным меню

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace BuJo.Data.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260531234518_Add_UserBotState")]
+    [Migration("20260601235813_Add_UserBotState")]
     partial class Add_UserBotState
     {
         /// <inheritdoc />
@@ -74,6 +74,10 @@ namespace BuJo.Data.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<long>("ChatId")
+                        .HasColumnType("bigint")
+                        .HasColumnName("chat_id");
+
                     b.Property<int?>("LastMenuMessageId")
                         .HasColumnType("integer")
                         .HasColumnName("last_menu_message_id");
@@ -99,9 +103,9 @@ namespace BuJo.Data.Migrations
                     b.HasKey("Id")
                         .HasName("pk_user_bot_states");
 
-                    b.HasIndex("UserId")
+                    b.HasIndex("UserId", "ChatId")
                         .IsUnique()
-                        .HasDatabaseName("ix_user_bot_states_user_id");
+                        .HasDatabaseName("ix_user_bot_states_user_id_chat_id");
 
                     b.ToTable("user_bot_states", (string)null);
                 });
@@ -231,8 +235,8 @@ namespace BuJo.Data.Migrations
             modelBuilder.Entity("BuJo.Domain.Accounting.UserBotState", b =>
                 {
                     b.HasOne("BuJo.Domain.Accounting.User", null)
-                        .WithOne()
-                        .HasForeignKey("BuJo.Domain.Accounting.UserBotState", "UserId")
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_user_bot_states_users_user_id");

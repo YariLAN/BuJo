@@ -18,7 +18,7 @@ internal sealed class MenuRenderer(
     /// </summary>
     public async Task EditAsync(Guid userId, long chatId, MenuView view, CancellationToken ct)
     {
-        var state = await userBotStateService.GetOrCreateAsync(userId, ct);
+        var state = await userBotStateService.GetOrCreateAsync(userId, chatId, ct);
 
         if (state.LastMenuMessageId is null)
         {
@@ -40,7 +40,7 @@ internal sealed class MenuRenderer(
     /// </summary>
     public async Task RecreateAsync(Guid userId, long chatId, MenuView view, CancellationToken ct)
     {
-        var state = await userBotStateService.GetOrCreateAsync(userId, ct);
+        var state = await userBotStateService.GetOrCreateAsync(userId, chatId, ct);
 
         if (state.LastMenuMessageId is not null)
         {
@@ -66,6 +66,6 @@ internal sealed class MenuRenderer(
             replyMarkup: view.Markup,
             cancellationToken: ct);
 
-        await userBotStateService.UpdateLastMenuMessageAsync(userId, sent.MessageId, ct);
+        await userBotStateService.UpdateLastMenuMessageAsync(userId, chatId, sent.MessageId, ct);
     }
 }

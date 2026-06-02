@@ -11,5 +11,5 @@ public interface IUserBotStateRepository : IRepositoryBase<UserBotState>
     /// <summary>
     /// Получить состояние диалога по идентификатору пользователя
     /// </summary>
-    Task<UserBotState?> GetByUserIdAsync(Guid userId, CancellationToken ct);
+    Task<UserBotState?> GetByUserIdAsync(Guid userId, long chatId, CancellationToken ct);
 }

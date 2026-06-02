@@ -17,7 +17,7 @@ internal sealed class SettingsMenuService(
         var view = RemindersSettingsMenuBuilder.Build(user.ReminderMorningTime, user.ReminderEveningTime);
 
         await renderer.EditAsync(userId, chatId, view, ct);
-        await userBotStateService.ClearPendingActionAsync(userId, ct);
+        await userBotStateService.ClearPendingActionAsync(userId, chatId, ct);
     }
 
     public async Task OpenTimePickerAsync(Guid userId, long chatId, ReminderKind kind, CancellationToken ct)
@@ -25,7 +25,7 @@ internal sealed class SettingsMenuService(
         var view = TimePickerMenuBuilder.Build(kind);
 
         await renderer.EditAsync(userId, chatId, view, ct);
-        await userBotStateService.ClearPendingActionAsync(userId, ct);
+        await userBotStateService.ClearPendingActionAsync(userId, chatId, ct);
     }
 
     public async Task OpenCustomTimePromptAsync(Guid userId, long chatId, ReminderKind kind, bool withError = false, CancellationToken ct = default)
@@ -41,6 +41,6 @@ internal sealed class SettingsMenuService(
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null),
         };
 
-        await userBotStateService.SetPendingActionAsync(userId, pendingAction, payload: null, ct);
+        await userBotStateService.SetPendingActionAsync(userId, chatId, pendingAction, payload: null, ct);
     }
 }

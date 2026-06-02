@@ -11,27 +11,27 @@ internal sealed class MenuService(
     {
         var view = MainMenuBuilder.Build();
         await renderer.RecreateAsync(userId, chatId, view, ct);
-        await userBotStateService.ClearPendingActionAsync(userId, ct);
+        await userBotStateService.ClearPendingActionAsync(userId, chatId, ct);
     }
 
     public async Task OpenMainAsync(Guid userId, long chatId, CancellationToken ct)
     {
         var view = MainMenuBuilder.Build();
         await renderer.EditAsync(userId, chatId, view, ct);
-        await userBotStateService.ClearPendingActionAsync(userId, ct);
+        await userBotStateService.ClearPendingActionAsync(userId, chatId, ct);
     }
 
     public async Task OpenSettingsAsync(Guid userId, long chatId, CancellationToken ct)
     {
         var view = SettingsMenuBuilder.Build();
         await renderer.EditAsync(userId, chatId, view, ct);
-        await userBotStateService.ClearPendingActionAsync(userId, ct);
+        await userBotStateService.ClearPendingActionAsync(userId, chatId, ct);
     }
 
     public async Task OpenStubAsync(Guid userId, long chatId, string title, CancellationToken ct)
     {
         var view = StubMenuBuilder.Build(title);
         await renderer.EditAsync(userId, chatId, view, ct);
-        await userBotStateService.ClearPendingActionAsync(userId, ct);
+        await userBotStateService.ClearPendingActionAsync(userId, chatId, ct);
     }
 }

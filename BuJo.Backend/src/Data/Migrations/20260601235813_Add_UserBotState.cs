@@ -25,6 +25,7 @@ namespace BuJo.Data.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    chat_id = table.Column<long>(type: "bigint", nullable: false),
                     last_menu_message_id = table.Column<int>(type: "integer", nullable: true),
                     pending_action = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
                     pending_payload = table.Column<string>(type: "text", nullable: true),
@@ -42,9 +43,9 @@ namespace BuJo.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_user_bot_states_user_id",
+                name: "ix_user_bot_states_user_id_chat_id",
                 table: "user_bot_states",
-                column: "user_id",
+                columns: new[] { "user_id", "chat_id" },
                 unique: true);
         }
 

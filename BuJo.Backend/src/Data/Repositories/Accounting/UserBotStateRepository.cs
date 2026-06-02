@@ -14,6 +14,6 @@ public class UserBotStateRepository : RepositoryBase<UserBotState>, IUserBotStat
         _dataContext = dataContext;
     }
 
-    public Task<UserBotState?> GetByUserIdAsync(Guid userId, CancellationToken ct)
-        => _dataContext.UserBotStates.FirstOrDefaultAsync(s => s.UserId == userId, ct);
+    public Task<UserBotState?> GetByUserIdAsync(Guid userId, long chatId, CancellationToken ct)
+        => _dataContext.UserBotStates.FirstOrDefaultAsync(s => s.UserId == userId && s.ChatId == chatId, ct);
 }

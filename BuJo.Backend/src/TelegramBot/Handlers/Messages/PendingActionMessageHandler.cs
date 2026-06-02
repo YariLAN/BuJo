@@ -31,7 +31,7 @@ public sealed class PendingActionMessageHandler(
         var userId = user.Id.Value;
         var chatId = message.Chat.Id;
 
-        var state = await userBotStateService.GetOrCreateAsync(userId, ct);
+        var state = await userBotStateService.GetOrCreateAsync(userId, chatId, ct);
         if (state.PendingAction == PendingAction.None)
         {
             logger.LogWarning("PendingActionMessageHandler invoked but PendingAction is None for user {UserId}", userId);
