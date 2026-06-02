@@ -3,18 +3,25 @@ using BuJo.Domain.Accounting;
 
 namespace BuJo.Application.Accounting;
 
-internal sealed class UserService(IUserRepository userRepository) : IUserService
+internal sealed class UserService : IUserService
 {
+    private readonly IUserRepository _userRepository;
+
+    public UserService(IUserRepository userRepository)
+    {
+        _userRepository = userRepository;
+    }
+    
     public async Task<UserResponse?> GetOrDefaultAsync(GetUserQuery query, CancellationToken ct)
     {
-        var user = await userRepository.GetBySpecAsync(new GetUserSpecification(query), ct);
+        var user = await _userRepository.GetBySpecAsync(new GetUserSpecification(query), ct);
 
         return user?.ToResponse();
     }
 
     public async Task<UserResponse> CreateAsync(CreateUserCommand command, CancellationToken ct)
     {
-        var existingUser = await userRepository.GetBySpecAsync(new GetUserSpecification(
+        var existingUser = await _userRepository.GetBySpecAsync(new GetUserSpecification(
                 new GetUserQuery(null, TelegramId: command.TelegramId)),
             ct);
 
@@ -22,17 +29,17 @@ internal sealed class UserService(IUserRepository userRepository) : IUserService
             throw new InvalidOperationException($"Пользователь с TelegramId {command.TelegramId} уже существует");
 
         var user = User.Create(command.TelegramId, command.Username);
-        await userRepository.AddAsync(user, ct);
+        await _userRepository.AddAsync(user, ct);
 
         return user.ToResponse();
     }
 
     public async Task SetReminderAsync(Guid userId, ReminderKind kind, TimeOnly time, CancellationToken ct)
     {
-        var user = await userRepository.GetBySpecAsync(new GetUserSpecification(new GetUserQuery(userId)), ct)
+        var user = await _userRepository.GetBySpecAsync(new GetUserSpecification(new GetUserQuery(userId)), ct)
             ?? throw new InvalidOperationException($"Пользователь с Id={userId} не найден");
 
         user.SetReminder(kind, time);
-        await userRepository.UpdateAsync(user, ct);
+        await _userRepository.UpdateAsync(user, ct);
     }
 }

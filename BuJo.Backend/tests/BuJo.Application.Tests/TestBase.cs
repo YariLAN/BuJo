@@ -1,0 +1,38 @@
+using AutoFixture;
+using AutoFixture.AutoMoq;
+using BuJo.Application.Accounting;
+using Moq;
+
+namespace BuJo.Application.Tests;
+
+public abstract class TestsBase
+{
+    protected readonly IFixture AutoFixture = new Fixture().Customize(new AutoMoqCustomization());
+
+    // Mocks for repositories
+    protected readonly Mock<IUserRepository> UserRepositoryMock;
+    protected readonly Mock<IUserBotStateRepository> UserBotStateRepositoryMock;
+
+    // Mocks for services
+    protected readonly Mock<IUserService> UserServiceMock;
+    protected readonly Mock<IUserBotStateService> UserBotStateServiceMock;
+
+    protected TestsBase()
+    {
+        CustomizeEntities();
+
+        UserRepositoryMock = new Mock<IUserRepository>();
+        UserBotStateRepositoryMock = new Mock<IUserBotStateRepository>();
+        UserServiceMock = new Mock<IUserService>();
+        UserBotStateServiceMock = new Mock<IUserBotStateService>();
+    }
+
+    /// <summary>
+    /// Настройка AutoFixture для создания доменных сущностей через фабричные методы,
+    /// т.к. их конструкторы приватные или параметризованные.
+    /// </summary>
+    private void CustomizeEntities()
+    {
+        
+    }
+}
