@@ -1,12 +1,16 @@
 services:
   host:
+    env_file:
+      - .env
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${BUJO_CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/home/app/.aspnet/https/BuJo.Host.pfx
     ports:
-      - "8080"
-      - "8081"
+      - "6180:8080"
+      - "6181:8081"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

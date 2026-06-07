@@ -1,10 +1,10 @@
-using System.Diagnostics;
 using BuJo.Application;
+using BuJo.Common.Logging;
 using BuJo.Data;
-using BuJo.Integrations.Telegram;
 using BuJo.TelegramBot;
 using BuJo.Web;
 using Scalar.AspNetCore;
+using Serilog;
 
 namespace BuJo.Host;
 
@@ -12,6 +12,11 @@ public class Program
 {
     public static async Task Main(string[] args)
     {
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .WriteTo.File("log.txt")
+            .CreateLogger();
+        
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services
@@ -23,23 +28,39 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddOpenApi();
 
+        builder.Host.UseLogger<HostOptions>();
+        
         var app = builder.Build();
 
-        await MigrateDatabase(app);
-        
-        if (app.Environment.IsDevelopment())
+        try
         {
-            app.MapOpenApi();
-            app.MapScalarApiReference();
+            Log.Information("Запуск приложения");
+            
+            await MigrateDatabase(app);
+            
+            if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Docker"))
+            {
+                app.MapOpenApi();
+                app.MapScalarApiReference();
+            }
+            app.UseHttpsRedirection();
+            
+            
+            app.UseAuthorization();
+            app.MapControllers();
+
+            await app.RunAsync();
         }
-
-        app.UseHttpsRedirection();
-
-        app.UseAuthorization();
-        
-        app.MapControllers();
-
-        await app.RunAsync();
+        catch (Exception exception)
+        {
+            Log.Fatal(exception, "Приложение неожиданно остановилось");
+            throw;
+        }
+        finally
+        {
+            Log.Information("Остановка приложения...");
+            await Log.CloseAndFlushAsync();
+        }
     }
     
     private static async Task MigrateDatabase(IHost host)
