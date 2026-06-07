@@ -33,6 +33,7 @@ public static class ServiceRegistry
 
         services.AddScoped<ICommandHandler, StartCommandHandler>();
         services.AddScoped<ICallbackHandler, MenuCallbackHandler>();
+        services.AddScoped<ICallbackHandler, SettingCallbackHandler>();
 
         services.AddScoped<PendingActionMessageHandler>();
         services.AddScoped<IPendingInputHandler, ReminderTimeInputHandler>();

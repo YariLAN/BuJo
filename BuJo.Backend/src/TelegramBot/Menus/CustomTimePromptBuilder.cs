@@ -1,4 +1,5 @@
 using BuJo.Domain.Accounting;
+using BuJo.TelegramBot.Menus.Settings;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BuJo.TelegramBot.Menus;
@@ -20,7 +21,7 @@ public static class CustomTimePromptBuilder
         {
             new[]
             {
-                InlineKeyboardButton.WithCallbackData("⬅️ Отмена", MenuCallbacks.SettingsRemindersPicker(kind)),
+                InlineKeyboardButton.WithCallbackData("⬅️ Отмена", SettingCallbacks.SettingsRemindersPicker(kind)),
             },
         });
 

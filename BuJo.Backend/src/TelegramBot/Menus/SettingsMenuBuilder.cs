@@ -1,3 +1,4 @@
+using BuJo.TelegramBot.Menus.Settings;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BuJo.TelegramBot.Menus;
@@ -15,7 +16,7 @@ public static class SettingsMenuBuilder
         {
             new[]
             {
-                InlineKeyboardButton.WithCallbackData("🔔 Напоминания", MenuCallbacks.SettingsReminders),
+                InlineKeyboardButton.WithCallbackData("🔔 Напоминания", SettingCallbacks.SettingsReminders),
             },
             new[]
             {

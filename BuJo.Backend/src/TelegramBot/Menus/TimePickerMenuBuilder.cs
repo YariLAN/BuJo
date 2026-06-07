@@ -1,4 +1,5 @@
 using BuJo.Domain.Accounting;
+using BuJo.TelegramBot.Menus.Settings;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BuJo.TelegramBot.Menus;
@@ -38,7 +39,7 @@ public static class TimePickerMenuBuilder
         var presetButtons = presets
             .Select(time => InlineKeyboardButton.WithCallbackData(
                 text: $"{time:HH\\:mm}",
-                callbackData: MenuCallbacks.SettingsRemindersSet(kind, time)))
+                callbackData: SettingCallbacks.SettingsRemindersSet(kind, time)))
             .ToArray();
 
         var markup = new InlineKeyboardMarkup(new[]
@@ -46,11 +47,11 @@ public static class TimePickerMenuBuilder
             presetButtons,
             new[]
             {
-                InlineKeyboardButton.WithCallbackData("✏️ Свой вариант", MenuCallbacks.SettingsRemindersCustom(kind)),
+                InlineKeyboardButton.WithCallbackData("✏️ Свой вариант", SettingCallbacks.SettingsRemindersCustom(kind)),
             },
             new[]
             {
-                InlineKeyboardButton.WithCallbackData("⬅️ Назад", MenuCallbacks.SettingsReminders),
+                InlineKeyboardButton.WithCallbackData("⬅️ Назад", SettingCallbacks.SettingsReminders),
             },
         });
 
