@@ -1,6 +1,6 @@
 using BuJo.Domain.Accounting;
 
-namespace BuJo.TelegramBot.Menus;
+namespace BuJo.TelegramBot.Menus.Main;
 
 /// <summary>
 /// Константы и фабрики значений callback_data для inline-кнопок меню
@@ -12,15 +12,15 @@ public static class MenuCallbacks
     /// </summary>
     public const string Prefix = "menu";
 
-    public const string Main = "menu:main";
+    public const string Main = Prefix + ":main";
 
-    public const string Settings = "menu:settings";
+    public const string Settings = Prefix + ":settings";
 
-    public const string HabitsList = "menu:habits";
+    public const string HabitsList = Prefix + ":habits";
 
-    public const string HabitCreate = "menu:habit:create";
+    public const string HabitCreate = Prefix + ":habit:create";
 
-    public const string TasksList = "menu:tasks";
+    public const string TasksList = Prefix + ":tasks";
 
-    public const string TaskCreate = "menu:task:create";
+    public const string TaskCreate = Prefix + ":task:create";
 }

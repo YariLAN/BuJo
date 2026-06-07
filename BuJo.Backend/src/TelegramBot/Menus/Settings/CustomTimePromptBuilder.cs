@@ -1,8 +1,7 @@
 using BuJo.Domain.Accounting;
-using BuJo.TelegramBot.Menus.Settings;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace BuJo.TelegramBot.Menus;
+namespace BuJo.TelegramBot.Menus.Settings;
 
 /// <summary>
 /// Сборщик экрана ручного ввода времени напоминания

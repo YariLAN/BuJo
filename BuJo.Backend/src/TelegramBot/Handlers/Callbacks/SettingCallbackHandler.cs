@@ -1,65 +1,38 @@
 using BuJo.Application.Accounting;
 using BuJo.Domain.Accounting;
-using BuJo.TelegramBot.Menus;
 using BuJo.TelegramBot.Menus.Settings;
 using BuJo.TelegramBot.Services;
+using BuJo.TelegramBot.Services.Settings;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 
 namespace BuJo.TelegramBot.Handlers.Callbacks;
 
-public sealed class SettingCallbackHandler(
-    IUserService userService,
-    ISettingsMenuService settingsMenuService,
-    ITelegramBotClient botClient,
-    ILogger<MenuCallbackHandler> logger) : ICallbackHandler
+public sealed class SettingCallbackHandler : CallbackHandlerBase
 {
-    public string Prefix => SettingCallbacks.Prefix;
-    
-    public async Task HandleAsync(CallbackQuery callback, CancellationToken ct)
+    private readonly IUserService userService;
+    private readonly ISettingsMenuService settingsMenuService;
+    private readonly ILogger<SettingCallbackHandler> logger;
+
+    public SettingCallbackHandler(
+        ITelegramBotClient botClient, 
+        IUserService userService, 
+        ISettingsMenuService settingsMenuService, 
+        ILogger<SettingCallbackHandler> logger) : base(botClient, userService, logger)
     {
-        try
-        {
-            await DispatchAsync(callback, ct);
-        }
-        finally
-        {
-            try
-            {
-                await botClient.AnswerCallbackQuery(callback.Id, cancellationToken: ct);
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning(ex, "Failed to answer callback query {CallbackId}", callback.Id);
-            }
-        }
+        this.userService = userService;
+        this.settingsMenuService = settingsMenuService;
+        this.logger = logger;
     }
 
-    private async Task DispatchAsync(CallbackQuery callback, CancellationToken ct)
+    public override string Prefix => SettingCallbacks.Prefix;
+
+    protected override async Task HandleCallbackAsync(Guid userId, CallbackQuery callbackQuery, CancellationToken ct = default)
     {
-        if (callback.Message is null || callback.Data is null)
-        {
-            logger.LogWarning("Callback {CallbackId} has no message or data", callback.Id);
-            return;
-        }
-
-        var telegramId = callback.From.Id.ToString();
-        var user = await userService.GetOrDefaultAsync(new GetUserQuery(null, TelegramId: telegramId), ct);
-        if (user?.Id is null)
-        {
-            await botClient.AnswerCallbackQuery(
-                callback.Id,
-                text: "Сначала отправь /start",
-                showAlert: true,
-                cancellationToken: ct);
-            return;
-        }
-
-        var userId = user.Id.Value;
-        var chatId = callback.Message.Chat.Id;
-        var data = callback.Data;
-
+        var chatId = callbackQuery.Message!.Chat.Id;
+        var data = callbackQuery.Data!;
+        
         switch (data)
         {
             case SettingCallbacks.SettingsReminders:
@@ -92,7 +65,7 @@ public sealed class SettingCallbackHandler(
 
         logger.LogWarning("Unknown menu callback data: {Data}", data);
     }
-
+    
     /// <summary>
     /// Распарсить callback_data вида settings:reminders:{morning|evening}:set:HH:MM
     /// </summary>

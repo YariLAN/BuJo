@@ -1,7 +1,7 @@
 using BuJo.Application.Accounting;
-using BuJo.Domain.Accounting;
-using BuJo.TelegramBot.Menus;
+using BuJo.TelegramBot.Menus.Main;
 using BuJo.TelegramBot.Services;
+using BuJo.TelegramBot.Services.Main;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
 using Telegram.Bot.Types;
@@ -10,56 +10,17 @@ namespace BuJo.TelegramBot.Handlers.Callbacks;
 
 public sealed class MenuCallbackHandler(
     IUserService userService,
-    IMenuService menuService,
-    ISettingsMenuService settingsMenuService,
     ITelegramBotClient botClient,
-    ILogger<MenuCallbackHandler> logger) : ICallbackHandler
+    IMenuService menuService,
+    ILogger<MenuCallbackHandler> logger) : CallbackHandlerBase(botClient, userService, logger)
 {
-    public string Prefix => MenuCallbacks.Prefix;
+    public override string Prefix => MenuCallbacks.Prefix;
 
-    public async Task HandleAsync(CallbackQuery callback, CancellationToken ct)
+    protected override async Task HandleCallbackAsync(Guid userId, CallbackQuery callbackQuery, CancellationToken ct = default)
     {
-        try
-        {
-            await DispatchAsync(callback, ct);
-        }
-        finally
-        {
-            try
-            {
-                await botClient.AnswerCallbackQuery(callback.Id, cancellationToken: ct);
-            }
-            catch (Exception ex)
-            {
-                logger.LogWarning(ex, "Failed to answer callback query {CallbackId}", callback.Id);
-            }
-        }
-    }
-
-    private async Task DispatchAsync(CallbackQuery callback, CancellationToken ct)
-    {
-        if (callback.Message is null || callback.Data is null)
-        {
-            logger.LogWarning("Callback {CallbackId} has no message or data", callback.Id);
-            return;
-        }
-
-        var telegramId = callback.From.Id.ToString();
-        var user = await userService.GetOrDefaultAsync(new GetUserQuery(null, TelegramId: telegramId), ct);
-        if (user?.Id is null)
-        {
-            await botClient.AnswerCallbackQuery(
-                callback.Id,
-                text: "Сначала отправь /start",
-                showAlert: true,
-                cancellationToken: ct);
-            return;
-        }
-
-        var userId = user.Id.Value;
-        var chatId = callback.Message.Chat.Id;
-        var data = callback.Data;
-
+        var chatId = callbackQuery.Message!.Chat.Id;
+        var data = callbackQuery.Data;
+        
         switch (data)
         {
             case MenuCallbacks.Main:

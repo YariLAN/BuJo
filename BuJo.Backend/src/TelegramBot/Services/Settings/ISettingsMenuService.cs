@@ -1,6 +1,6 @@
 using BuJo.Domain.Accounting;
 
-namespace BuJo.TelegramBot.Services;
+namespace BuJo.TelegramBot.Services.Settings;
 
 /// <summary>
 /// Сервис навигации по разделу «Настройки»

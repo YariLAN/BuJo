@@ -1,7 +1,7 @@
-using BuJo.TelegramBot.Menus.Settings;
+using BuJo.TelegramBot.Menus.Main;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace BuJo.TelegramBot.Menus;
+namespace BuJo.TelegramBot.Menus.Settings;
 
 /// <summary>
 /// Сборщик главного экрана настроек (хаб с категориями)

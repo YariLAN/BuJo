@@ -9,28 +9,21 @@ public static class SettingCallbacks
     /// </summary>
     public const string Prefix = "settings";
     
-    public const string SettingsReminders = "settings:reminders";
+    public const string SettingsReminders = Prefix + ":reminders";
 
-    public const string SettingsRemindersMorning = "settings:reminders:morning";
+    public const string SettingsRemindersMorning = SettingsReminders + ":morning";
 
-    public const string SettingsRemindersEvening = "settings:reminders:evening";
+    public const string SettingsRemindersEvening = SettingsReminders + ":evening";
 
-    public const string SettingsRemindersMorningCustom = "settings:reminders:morning:custom";
+    public const string SettingsRemindersMorningCustom = SettingsRemindersMorning + ":custom";
 
-    public const string SettingsRemindersEveningCustom = "settings:reminders:evening:custom";
+    public const string SettingsRemindersEveningCustom = SettingsRemindersEvening + ":custom";
     
     /// <summary>
     /// Построить callback_data для установки времени напоминания по пресету
     /// </summary>
     public static string SettingsRemindersSet(ReminderKind kind, TimeOnly time)
-        => $"{SettingsReminders}:{KindSlug(kind)}:set:{time:HH\\:mm}";
-    
-    private static string KindSlug(ReminderKind kind) => kind switch
-    {
-        ReminderKind.Morning => "morning",
-        ReminderKind.Evening => "evening",
-        _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null),
-    };
+        => $"{SettingsRemindersPicker(kind)}:set:{time:HH\\:mm}";
     
     /// <summary>
     /// Получить callback_data выбора времени для указанного типа напоминания

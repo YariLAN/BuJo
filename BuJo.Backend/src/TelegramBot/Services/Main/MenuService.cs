@@ -1,7 +1,8 @@
 using BuJo.Application.Accounting;
-using BuJo.TelegramBot.Menus;
+using BuJo.TelegramBot.Menus.Main;
+using BuJo.TelegramBot.Menus.Settings;
 
-namespace BuJo.TelegramBot.Services;
+namespace BuJo.TelegramBot.Services.Main;
 
 internal sealed class MenuService(
     MenuRenderer renderer,

@@ -1,6 +1,6 @@
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace BuJo.TelegramBot.Menus;
+namespace BuJo.TelegramBot.Menus.Main;
 
 /// <summary>
 /// Сборщик экрана-заглушки для пунктов меню, ещё не реализованных
