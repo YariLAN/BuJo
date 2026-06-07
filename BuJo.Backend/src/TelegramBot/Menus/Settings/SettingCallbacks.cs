@@ -1,45 +1,30 @@
 using BuJo.Domain.Accounting;
 
-namespace BuJo.TelegramBot.Menus;
+namespace BuJo.TelegramBot.Menus.Settings;
 
-/// <summary>
-/// Константы и фабрики значений callback_data для inline-кнопок меню
-/// </summary>
-public static class MenuCallbacks
+public static class SettingCallbacks
 {
     /// <summary>
     /// Префикс домена меню — используется UpdateDispatcher для маршрутизации CallbackQuery
     /// </summary>
-    public const string Prefix = "menu";
+    public const string Prefix = "settings";
+    
+    public const string SettingsReminders = Prefix + ":reminders";
 
-    public const string Main = "menu:main";
+    public const string SettingsRemindersMorning = SettingsReminders + ":morning";
 
-    public const string Settings = "menu:settings";
+    public const string SettingsRemindersEvening = SettingsReminders + ":evening";
 
-    public const string SettingsReminders = "menu:settings:reminders";
+    public const string SettingsRemindersMorningCustom = SettingsRemindersMorning + ":custom";
 
-    public const string SettingsRemindersMorning = "menu:settings:reminders:morning";
-
-    public const string SettingsRemindersEvening = "menu:settings:reminders:evening";
-
-    public const string SettingsRemindersMorningCustom = "menu:settings:reminders:morning:custom";
-
-    public const string SettingsRemindersEveningCustom = "menu:settings:reminders:evening:custom";
-
-    public const string HabitsList = "menu:habits";
-
-    public const string HabitCreate = "menu:habit:create";
-
-    public const string TasksList = "menu:tasks";
-
-    public const string TaskCreate = "menu:task:create";
-
+    public const string SettingsRemindersEveningCustom = SettingsRemindersEvening + ":custom";
+    
     /// <summary>
     /// Построить callback_data для установки времени напоминания по пресету
     /// </summary>
     public static string SettingsRemindersSet(ReminderKind kind, TimeOnly time)
-        => $"menu:settings:reminders:{KindSlug(kind)}:set:{time:HH\\:mm}";
-
+        => $"{SettingsRemindersPicker(kind)}:set:{time:HH\\:mm}";
+    
     /// <summary>
     /// Получить callback_data выбора времени для указанного типа напоминания
     /// </summary>
@@ -61,11 +46,4 @@ public static class MenuCallbacks
             ReminderKind.Evening => SettingsRemindersEveningCustom,
             _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null),
         };
-
-    private static string KindSlug(ReminderKind kind) => kind switch
-    {
-        ReminderKind.Morning => "morning",
-        ReminderKind.Evening => "evening",
-        _ => throw new ArgumentOutOfRangeException(nameof(kind), kind, null),
-    };
 }

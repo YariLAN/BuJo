@@ -3,6 +3,8 @@ using BuJo.TelegramBot.Handlers.Callbacks;
 using BuJo.TelegramBot.Handlers.Commands;
 using BuJo.TelegramBot.Handlers.Messages;
 using BuJo.TelegramBot.Services;
+using BuJo.TelegramBot.Services.Main;
+using BuJo.TelegramBot.Services.Settings;
 using BuJo.TelegramBot.Workers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -33,6 +35,7 @@ public static class ServiceRegistry
 
         services.AddScoped<ICommandHandler, StartCommandHandler>();
         services.AddScoped<ICallbackHandler, MenuCallbackHandler>();
+        services.AddScoped<ICallbackHandler, SettingCallbackHandler>();
 
         services.AddScoped<PendingActionMessageHandler>();
         services.AddScoped<IPendingInputHandler, ReminderTimeInputHandler>();

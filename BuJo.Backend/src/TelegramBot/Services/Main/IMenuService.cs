@@ -1,4 +1,4 @@
-namespace BuJo.TelegramBot.Services;
+namespace BuJo.TelegramBot.Services.Main;
 
 /// <summary>
 /// Сервис навигации по главным экранам бота (главное меню, настройки-хаб, заглушки)

@@ -1,7 +1,7 @@
 using BuJo.Domain.Accounting;
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace BuJo.TelegramBot.Menus;
+namespace BuJo.TelegramBot.Menus.Settings;
 
 /// <summary>
 /// Сборщик экрана ручного ввода времени напоминания
@@ -20,7 +20,7 @@ public static class CustomTimePromptBuilder
         {
             new[]
             {
-                InlineKeyboardButton.WithCallbackData("⬅️ Отмена", MenuCallbacks.SettingsRemindersPicker(kind)),
+                InlineKeyboardButton.WithCallbackData("⬅️ Отмена", SettingCallbacks.SettingsRemindersPicker(kind)),
             },
         });
 
