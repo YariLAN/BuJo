@@ -1,6 +1,7 @@
 using Ardalis.Specification;
 using Ardalis.Specification.EntityFrameworkCore;
 using BuJo.Application.Accounting;
+using BuJo.Application.Accounting.Abstractions;
 using BuJo.Domain.Accounting;
 using Microsoft.EntityFrameworkCore;
 

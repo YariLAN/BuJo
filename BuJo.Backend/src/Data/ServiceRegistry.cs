@@ -1,4 +1,5 @@
 using BuJo.Application.Accounting;
+using BuJo.Application.Accounting.Abstractions;
 using BuJo.Data.Repositories.Accounting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

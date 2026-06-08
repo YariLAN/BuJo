@@ -1,7 +1,7 @@
 using Ardalis.Specification;
 using BuJo.Domain.Accounting;
 
-namespace BuJo.Application.Accounting;
+namespace BuJo.Application.Accounting.Abstractions;
 
 /// <summary>
 /// Репозиторий состояний диалога пользователя с ботом

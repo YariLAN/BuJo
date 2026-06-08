@@ -1,6 +1,6 @@
 using BuJo.Domain.Accounting;
 
-namespace BuJo.Application.Accounting;
+namespace BuJo.Application.Accounting.Abstractions;
 
 /// <summary>
 /// Сервис для работы с состоянием диалога пользователя с ботом

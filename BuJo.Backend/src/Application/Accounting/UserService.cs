@@ -1,3 +1,4 @@
+using BuJo.Application.Accounting.Abstractions;
 using BuJo.Contracts.V1.Accounting;
 using BuJo.Domain.Accounting;
 

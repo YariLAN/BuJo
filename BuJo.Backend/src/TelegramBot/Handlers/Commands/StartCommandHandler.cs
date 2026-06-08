@@ -1,4 +1,5 @@
 using BuJo.Application.Accounting;
+using BuJo.Application.Accounting.Abstractions;
 using BuJo.TelegramBot.Services;
 using BuJo.TelegramBot.Services.Main;
 using Telegram.Bot;

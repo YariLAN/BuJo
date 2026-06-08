@@ -1,7 +1,7 @@
 using BuJo.Contracts.V1.Accounting;
 using BuJo.Domain.Accounting;
 
-namespace BuJo.Application.Accounting;
+namespace BuJo.Application.Accounting.Abstractions;
 
 /// <summary>
 /// Сервис для работы с сущностью <inheritdoc cref="User"/>

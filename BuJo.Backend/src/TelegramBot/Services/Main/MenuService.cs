@@ -1,4 +1,5 @@
 using BuJo.Application.Accounting;
+using BuJo.Application.Accounting.Abstractions;
 using BuJo.TelegramBot.Menus.Main;
 using BuJo.TelegramBot.Menus.Settings;
 

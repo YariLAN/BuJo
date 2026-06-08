@@ -1,3 +1,4 @@
+using BuJo.Application.Accounting.Abstractions;
 using BuJo.Domain.Accounting;
 
 namespace BuJo.Application.Accounting;

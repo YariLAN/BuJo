@@ -1,4 +1,5 @@
 using BuJo.Application.Accounting;
+using BuJo.Application.Accounting.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BuJo.Application;
