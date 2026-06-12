@@ -6,12 +6,13 @@ public sealed class Task
 {
     private User? _user;
     
-    private Task(Guid id, Guid userId, string title, TaskStatus status, DateTimeOffset createdAt)
+    private Task(Guid id, Guid userId, string title, TaskStatus status, TaskPriority priority, DateTimeOffset createdAt)
     {
         Id = id;
         UserId = userId;
         Title = title;
         Status = status;
+        Priority = priority;
         CreatedAt = createdAt;
     }
     
@@ -33,6 +34,8 @@ public sealed class Task
     
     public TaskStatus Status { get; private set; }
     
+    public TaskPriority Priority { get; private set; }
+    
     /// <summary>
     /// Дата-время начала задачи
     /// </summary>
@@ -51,22 +54,25 @@ public sealed class Task
     /// <summary>
     /// Было ли напоминание о задаче
     /// </summary>
-    public bool IsSentReminder { get; private set; } 
+    public bool IsSentReminder { get; private set; }
     
     public DateTimeOffset CreatedAt { get; private set; }
 
     public void ChangeStatus(TaskStatus status) => Status = status;
     
+    public void ChangePriority(TaskPriority priority) => Priority = priority;
+    
     public static Task Create(
-        Guid userId, 
-        string title, 
-        string? description = null, 
-        DateTimeOffset? startDate = null, 
+        Guid userId,
+        string title,
+        string? description = null,
+        TaskPriority priority = TaskPriority.Medium,
+        DateTimeOffset? startDate = null,
         DateTimeOffset? dueDate = null,
         DateTimeOffset? reminderAt = null)
-        => new(Guid.NewGuid(), userId, title, TaskStatus.ToDo, DateTimeOffset.Now)
+        => new(Guid.NewGuid(), userId, title, TaskStatus.ToDo, priority, DateTimeOffset.Now)
         {
-            Description = description, 
+            Description = description,
             StartDateTime = startDate,
             DueDateTime = dueDate,
             ReminderAt = reminderAt,

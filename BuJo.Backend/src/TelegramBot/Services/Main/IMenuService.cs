@@ -24,4 +24,14 @@ public interface IMenuService
     /// Открыть экран-заглушку «скоро будет» с указанным заголовком
     /// </summary>
     Task OpenStubAsync(Guid userId, long chatId, string title, CancellationToken ct = default);
+
+    /// <summary>
+    /// Открыть список задач (редиректит на /tasks через команду)
+    /// </summary>
+    Task OpenTasksAsync(Guid userId, long chatId, CancellationToken ct = default);
+
+    /// <summary>
+    /// Начать создание задачи (редиректит на /create-task через команду)
+    /// </summary>
+    Task OpenTaskCreateAsync(Guid userId, long chatId, CancellationToken ct = default);
 }

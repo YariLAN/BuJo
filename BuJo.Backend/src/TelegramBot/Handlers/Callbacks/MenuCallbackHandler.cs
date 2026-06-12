@@ -41,11 +41,11 @@ public sealed class MenuCallbackHandler(
                 return;
 
             case MenuCallbacks.TasksList:
-                await menuService.OpenStubAsync(userId, chatId, "Задачи", ct);
+                await menuService.OpenTasksAsync(userId, chatId, ct);
                 return;
 
             case MenuCallbacks.TaskCreate:
-                await menuService.OpenStubAsync(userId, chatId, "Создание задачи", ct);
+                await menuService.OpenTaskCreateAsync(userId, chatId, ct);
                 return;
         }
         

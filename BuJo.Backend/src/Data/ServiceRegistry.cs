@@ -1,6 +1,8 @@
 using BuJo.Application.Accounting;
 using BuJo.Application.Accounting.Abstractions;
+using BuJo.Application.Tasks.Abstractions;
 using BuJo.Data.Repositories.Accounting;
+using BuJo.Data.Repositories.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,7 +24,7 @@ public static class ServiceRegistry
         
         var options = configuration
             .GetRequiredSection(ConnectionOptions.SectionName)
-            .Get<ConnectionOptions>() 
+            .Get<ConnectionOptions>()
                       ?? throw new ArgumentNullException();
         
         services.AddDbContext<DataContext>(builder =>
@@ -42,6 +44,7 @@ public static class ServiceRegistry
     {
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IUserBotStateRepository, UserBotStateRepository>();
+        services.AddTransient<ITaskRepository, TaskRepository>();
 
         return services;
     }

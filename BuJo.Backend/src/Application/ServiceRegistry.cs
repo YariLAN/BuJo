@@ -1,5 +1,7 @@
 using BuJo.Application.Accounting;
 using BuJo.Application.Accounting.Abstractions;
+using BuJo.Application.Tasks;
+using BuJo.Application.Tasks.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BuJo.Application;
@@ -10,6 +12,7 @@ public static class ServiceRegistry
     {
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<IUserBotStateService, UserBotStateService>();
+        services.AddTransient<ITaskService, TaskService>();
 
         return services;
     }
