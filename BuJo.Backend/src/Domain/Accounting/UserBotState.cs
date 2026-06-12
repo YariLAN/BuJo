@@ -105,4 +105,9 @@ public enum PendingAction
     /// Ожидается ввод времени вечернего напоминания в формате HH:MM
     /// </summary>
     AwaitingEveningTime,
+
+    /// <summary>
+    /// Ожидается ввод названия новой привычки
+    /// </summary>
+    AwaitingHabitName,
 }

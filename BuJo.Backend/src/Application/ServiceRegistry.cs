@@ -1,4 +1,5 @@
 using BuJo.Application.Accounting;
+using BuJo.Application.Habits;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BuJo.Application;
@@ -9,6 +10,7 @@ public static class ServiceRegistry
     {
         services.AddTransient<IUserService, UserService>();
         services.AddTransient<IUserBotStateService, UserBotStateService>();
+        services.AddTransient<IHabitService, HabitService>();
 
         return services;
     }

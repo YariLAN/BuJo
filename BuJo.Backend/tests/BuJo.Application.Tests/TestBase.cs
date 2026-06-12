@@ -1,6 +1,7 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using BuJo.Application.Accounting;
+using BuJo.Application.Habits;
 using Moq;
 
 namespace BuJo.Application.Tests;
@@ -11,7 +12,10 @@ public abstract class TestsBase
 
     // Mocks for repositories
     protected readonly Mock<IUserRepository> UserRepositoryMock;
+    
     protected readonly Mock<IUserBotStateRepository> UserBotStateRepositoryMock;
+
+    protected readonly Mock<IHabitRepository> HabitRepositoryMock;
 
     // Mocks for services
     protected readonly Mock<IUserService> UserServiceMock;
@@ -23,6 +27,7 @@ public abstract class TestsBase
 
         UserRepositoryMock = new Mock<IUserRepository>();
         UserBotStateRepositoryMock = new Mock<IUserBotStateRepository>();
+        HabitRepositoryMock = new Mock<IHabitRepository>();
         UserServiceMock = new Mock<IUserService>();
         UserBotStateServiceMock = new Mock<IUserBotStateService>();
     }
