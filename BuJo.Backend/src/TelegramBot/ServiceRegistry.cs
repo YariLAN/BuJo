@@ -3,6 +3,7 @@ using BuJo.TelegramBot.Handlers.Callbacks;
 using BuJo.TelegramBot.Handlers.Commands;
 using BuJo.TelegramBot.Handlers.Messages;
 using BuJo.TelegramBot.Services;
+using BuJo.TelegramBot.Services.Habits;
 using BuJo.TelegramBot.Services.Main;
 using BuJo.TelegramBot.Services.Settings;
 using BuJo.TelegramBot.Services.Tasks;
@@ -33,6 +34,7 @@ public static class ServiceRegistry
         services.AddScoped<MenuRenderer>();
         services.AddScoped<IMenuService, MenuService>();
         services.AddScoped<ISettingsMenuService, SettingsMenuService>();
+        services.AddScoped<IHabitsMenuService, HabitsMenuService>();
         services.AddScoped<ITasksMenuService, TasksMenuService>();
 
         services.AddScoped<ICommandHandler, StartCommandHandler>();
@@ -40,10 +42,12 @@ public static class ServiceRegistry
         services.AddScoped<ICommandHandler, CreateTaskCommandHandler>();
         services.AddScoped<ICallbackHandler, MenuCallbackHandler>();
         services.AddScoped<ICallbackHandler, SettingCallbackHandler>();
+        services.AddScoped<ICallbackHandler, HabitsCallbackHandler>();
         services.AddScoped<ICallbackHandler, TasksCallbackHandler>();
 
         services.AddScoped<PendingActionMessageHandler>();
         services.AddScoped<IPendingInputHandler, ReminderTimeInputHandler>();
+        services.AddScoped<IPendingInputHandler, HabitNameInputHandler>();
         services.AddScoped<IPendingInputHandler, TaskCreationPendingInputHandler>();
 
         return services;

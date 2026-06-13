@@ -11,6 +11,12 @@ public static class ApiRoutesV1
     public const string UserRegister = Users + "/register";
 
     #endregion
+
+    #region Habits
+
+    public const string Habits = Root + "/habits";
+
+    #endregion
     
     #region Tasks
 

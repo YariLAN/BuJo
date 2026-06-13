@@ -1,7 +1,9 @@
 using BuJo.Application.Accounting;
+using BuJo.Application.Habits;
 using BuJo.Application.Accounting.Abstractions;
 using BuJo.Application.Tasks.Abstractions;
 using BuJo.Data.Repositories.Accounting;
+using BuJo.Data.Repositories.Habits;
 using BuJo.Data.Repositories.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -44,6 +46,7 @@ public static class ServiceRegistry
     {
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IUserBotStateRepository, UserBotStateRepository>();
+        services.AddTransient<IHabitRepository, HabitRepository>();
         services.AddTransient<ITaskRepository, TaskRepository>();
 
         return services;

@@ -125,4 +125,9 @@ public enum PendingAction
     /// Ожидается ввод дедлайна задачи
     /// </summary>
     AwaitingTaskDueDate,
+
+    /// <summary>
+    /// Ожидается ввод названия новой привычки
+    /// </summary>
+    AwaitingHabitName,
 }

@@ -2,6 +2,7 @@ using BuJo.Application.Accounting;
 using BuJo.Application.Accounting.Abstractions;
 using BuJo.TelegramBot.Menus.Main;
 using BuJo.TelegramBot.Services;
+using BuJo.TelegramBot.Services.Habits;
 using BuJo.TelegramBot.Services.Main;
 using Microsoft.Extensions.Logging;
 using Telegram.Bot;
@@ -13,6 +14,7 @@ public sealed class MenuCallbackHandler(
     IUserService userService,
     ITelegramBotClient botClient,
     IMenuService menuService,
+    IHabitsMenuService habitsMenuService,
     ILogger<MenuCallbackHandler> logger) : CallbackHandlerBase(botClient, userService, logger)
 {
     public override string Prefix => MenuCallbacks.Prefix;
@@ -33,11 +35,11 @@ public sealed class MenuCallbackHandler(
                 return;
 
             case MenuCallbacks.HabitsList:
-                await menuService.OpenStubAsync(userId, chatId, "Привычки", ct);
+                await habitsMenuService.OpenListAsync(userId, chatId, ct);
                 return;
 
             case MenuCallbacks.HabitCreate:
-                await menuService.OpenStubAsync(userId, chatId, "Создание привычки", ct);
+                await habitsMenuService.OpenCreatePromptAsync(userId, chatId, ct);
                 return;
 
             case MenuCallbacks.TasksList:
