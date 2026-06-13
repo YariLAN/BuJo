@@ -28,7 +28,7 @@ public sealed class HabitNameInputHandler(
         try
         {
             var habit = await habitService.CreateAsync(new CreateHabitCommand(userId, name), ct);
-            await habitsMenuService.ShowCreatedAsync(userId, chatId, habit.Name, ct);
+            await habitsMenuService.ShowCreatedAsync(userId, chatId, habit.Name!, ct);
         }
         catch (Exception ex) when (ex is ArgumentException or InvalidOperationException)
         {
