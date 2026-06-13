@@ -44,7 +44,7 @@ public sealed class Habit
     
     public static Habit Create(Guid userId, string name)
     {
-        var now = DateTimeOffset.Now;
+        var now = DateTimeOffset.UtcNow;
         return new Habit(Guid.NewGuid(), userId, name, false, now)
         {
             UpdatedAt = now
