@@ -216,23 +216,74 @@ DTO-контракты лежат в [Contracts/V1/](BuJo.Backend/src/Contracts/
 /settings       — настройки напоминаний
 ```
 
-Callback-handlers (inline-кнопки) — ещё не реализованы. По дизайну:
-- `HabitLogCallbackHandler` — обработка ✅/❌ для отметки привычки за день
-- `TaskStatusCallbackHandler` — смена статуса задачи (`Todo → InProgress → Done`)
+Callback-handlers (inline-кнопки) — не реализованы. По дизайну:
+- `HabitLogCallbackHandler` — обработка ✅/❌ для отметки привычки за день (расширение `HabitsCallbackHandler`)
+- `TasksCallbackHandler` — навигация и смена статуса задачи (`Todo → InProgress → Done`)
 
 Message-handlers (свободный текст):
 - `QuickAddTaskHandler` — превращает произвольное сообщение в задачу
 
+### Архитектура callback-хендлеров
+
+Callback-запросы маршрутизируются в [UpdateDispatcher](BuJo.Backend/src/TelegramBot/UpdateDispatcher.cs)
+по **префиксу** `callback_data` (часть до первого `:`):
+
+```
+"menu:habits"   → prefix "menu"    → MenuCallbackHandler
+"habits:add"    → prefix "habits"  → HabitsCallbackHandler
+"settings:..."  → prefix "settings"→ SettingCallbackHandler
+```
+
+Каждый домен образует собственную иерархию из трёх компонентов:
+
+| Компонент | Файл | Назначение |
+|---|---|---|
+| `*Callbacks` | `TelegramBot/Menus/<Domain>/*Callbacks.cs` | Константы `Prefix` и `callback_data` для кнопок |
+| `*CallbackHandler` | `TelegramBot/Handlers/Callbacks/*CallbackHandler.cs` | Наследует `CallbackHandlerBase`, свойство `Prefix`, switch по `callback.Data` |
+| `*MenuService` | `TelegramBot/Services/<Domain>/*MenuService.cs` | Строит `MenuView` через билдеры, управляет `PendingAction` |
+
+**Роль `MenuCallbackHandler`** — только точки входа из главного меню в другие домены
+(`menu:habits` → открыть раздел привычек, `menu:settings` → открыть настройки).
+Навигация внутри раздела — исключительно через хендлер своего домена.
+
+**Стандарт `*MenuService`:**
+- `MenuService` — статичные меню без обращений в БД (главное меню, настройки, заглушки)
+- `*MenuService` (специализированный) — динамичные экраны, требующие данных из Application-слоя
+  (пример: `HabitsMenuService` загружает список привычек через `IHabitService`)
+
+**Реализованные callback-хендлеры:**
+
+| Хендлер | Prefix | Callback-константы | Вызывает |
+|---|---|---|---|
+| [MenuCallbackHandler](BuJo.Backend/src/TelegramBot/Handlers/Callbacks/MenuCallbackHandler.cs) | `menu` | [MenuCallbacks](BuJo.Backend/src/TelegramBot/Menus/Main/MenuCallbacks.cs) | `IMenuService`, `IHabitsMenuService` |
+| [SettingCallbackHandler](BuJo.Backend/src/TelegramBot/Handlers/Callbacks/SettingCallbackHandler.cs) | `settings` | [SettingCallbacks](BuJo.Backend/src/TelegramBot/Menus/Settings/SettingCallbacks.cs) | `ISettingsMenuService` |
+| [HabitsCallbackHandler](BuJo.Backend/src/TelegramBot/Handlers/Callbacks/HabitsCallbackHandler.cs) | `habits` | [HabitCallbacks](BuJo.Backend/src/TelegramBot/Menus/Habits/HabitCallbacks.cs) | `IHabitsMenuService` |
+
 ### Расширение бота
 
-Чтобы добавить новую команду:
-1. Создать класс в `TelegramBot/Handlers/Commands/`, реализовать `ICommandHandler`
+**Добавить команду `/foo`:**
+1. Создать `TelegramBot/Handlers/Commands/FooCommandHandler.cs`, реализовать `ICommandHandler`
    ([интерфейс](BuJo.Backend/src/TelegramBot/Handlers/ICommandHandler.cs): `Command` + `HandleAsync(Message, CancellationToken)`).
 2. Зарегистрировать в [TelegramBot/ServiceRegistry.cs](BuJo.Backend/src/TelegramBot/ServiceRegistry.cs)
    как `ICommandHandler` (DI разрешит коллекцию в `UpdateDispatcher`).
 
-Для callback-ов / нетекстовых апдейтов потребуется расширить `UpdateDispatcher.DispatchAsync`
-(сейчас в `switch` только ветка `Message`-команды).
+**Добавить новый callback-домен (например, Tasks):**
+1. `TelegramBot/Menus/Tasks/TaskCallbacks.cs` — `Prefix = "tasks"` + константы кнопок.
+2. `TelegramBot/Menus/Tasks/*MenuBuilder.cs` — один или несколько статических билдеров `MenuView`.
+3. `TelegramBot/Services/Tasks/ITasksMenuService.cs` + `TasksMenuService.cs` — сервис меню.
+4. `TelegramBot/Handlers/Callbacks/TasksCallbackHandler.cs` — наследует `CallbackHandlerBase`,
+   `Prefix = TaskCallbacks.Prefix`, switch по `callback.Data` → вызов `ITasksMenuService`.
+5. В `MenuCallbackHandler` добавить `case MenuCallbacks.TasksList:` → `tasksMenuService.OpenListAsync(...)`.
+6. Зарегистрировать в `TelegramBot/ServiceRegistry.cs`:
+   `AddScoped<ITasksMenuService, TasksMenuService>()` и `AddScoped<ICallbackHandler, TasksCallbackHandler>()`.
+
+**Добавить ожидание текстового ввода (PendingAction):**
+1. Добавить новый член в enum `PendingAction` в [UserBotState.cs](BuJo.Backend/src/Domain/Accounting/UserBotState.cs).
+2. Создать `TelegramBot/Handlers/Messages/*InputHandler.cs`, реализовать `IPendingInputHandler`
+   (`CanHandle(PendingAction)` + `HandleAsync(...)`).
+3. В `*MenuService.OpenCreatePromptAsync()` вызвать
+   `userBotStateService.SetPendingActionAsync(..., PendingAction.AwaitingXxx, ...)`.
+4. Зарегистрировать как `IPendingInputHandler` в `TelegramBot/ServiceRegistry.cs`.
 
 ---
 
@@ -308,15 +359,22 @@ builder.Services
 
 Реализовано:
 - Доменная модель `User` / `Habit` / `HabitLog` / `Task` + миграции БД.
-- `UserService` (создание / поиск).
-- Telegram polling, dispatcher и команда `/start` (поверх `Telegram.Bot` SDK напрямую).
+- `UserService` (создание / поиск / установка времени напоминаний).
+- `HabitService` (создание / список) + `IHabitRepository`.
+- REST API: `POST /api/v1/habits`, `GET /api/v1/habits` (идентификация через `X-Telegram-Id`).
+- Telegram polling, dispatcher, команда `/start`.
+- Callback-хендлеры: `MenuCallbackHandler`, `SettingCallbackHandler`, `HabitsCallbackHandler`.
+- Message-хендлеры: `ReminderTimeInputHandler`, `HabitNameInputHandler`.
+- Menu-сервисы: `MenuService` (главное меню, настройки), `SettingsMenuService`, `HabitsMenuService`.
+- `PendingAction`: `AwaitingMorningTime`, `AwaitingEveningTime`, `AwaitingHabitName`.
 
 Не реализовано (но описано в дизайн-документе):
 - Прослойка `Integrations/Telegram` как обёртка SDK — лежит каркас контрактов, но `TelegramBot`
   всё ещё работает с `Telegram.Bot` напрямую.
-- Сервисы и API для `Habit` / `Task` (CRUD, отметка выполнения, статистика, смена статуса).
+- Сервисы и API для `Task` (CRUD, смена статуса).
+- Сервисы и API для `Habit`: архивирование, отметка выполнения (`HabitLog`), статистика.
 - Эндпойнт `PUT /api/v1/users/settings` для настройки времени напоминаний.
-- Все Telegram-команды кроме `/start`, все callback- и message-handlers.
-- Фоновые джобы (`HostJobs` пуст) — отправка утренних/вечерних напоминаний и напоминаний по задачам
-  (`Task.ReminderAt` + `IsSentReminder` уже в схеме под это).
+- Telegram-команды кроме `/start`; callback- и message-хендлеры для задач.
+- Фоновые джобы (`HostJobs` пуст) — отправка напоминаний по расписанию
+  (`Task.ReminderAt` + `IsSentReminder` / `User.ReminderMorningTime` уже в схеме).
 - React-дашборд.
