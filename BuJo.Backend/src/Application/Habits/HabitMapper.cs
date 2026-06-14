@@ -10,4 +10,18 @@ public static class HabitMapper
         habit.Name,
         habit.IsArchived,
         habit.CreatedAt);
+
+    public static HabitLogResponse ToResponse(this HabitLog log) => HabitLogResponse.Create(
+        log.Id,
+        log.HabitId,
+        log.Habit.Name,
+        log.Date,
+        log.IsCompleted);
+
+    public static HabitLogResponse ToResponse(this HabitLog log, string? habitName) => HabitLogResponse.Create(
+        log.Id,
+        log.HabitId,
+        habitName,
+        log.Date,
+        log.IsCompleted);
 }

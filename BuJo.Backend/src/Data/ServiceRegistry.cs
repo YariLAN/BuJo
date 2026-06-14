@@ -44,6 +44,7 @@ public static class ServiceRegistry
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IUserBotStateRepository, UserBotStateRepository>();
         services.AddTransient<IHabitRepository, HabitRepository>();
+        services.AddTransient<IHabitLogRepository, HabitLogRepository>();
 
         return services;
     }

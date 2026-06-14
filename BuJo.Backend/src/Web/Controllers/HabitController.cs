@@ -65,6 +65,113 @@ public sealed class HabitController : ControllerBase
         return Ok(habits);
     }
 
+    /// <summary>
+    /// Отметить выполнение привычки
+    /// </summary>
+    [HttpPost(ApiRoutesV1.HabitLog)]
+    public async Task<ActionResult<HabitLogResponse>> LogAsync(
+        Guid id,
+        LogHabitRequest request,
+        CancellationToken ct)
+    {
+        var telegramId = GetTelegramId();
+        if (telegramId is null)
+            return BadRequest($"Заголовок {TelegramIdHeader} обязателен");
+
+        var user = await _userService.GetOrDefaultAsync(new GetUserQuery(null, TelegramId: telegramId), ct);
+        if (user?.Id is null)
+            return NotFound($"Пользователь с TelegramId {telegramId} не найден");
+
+        var habit = await _habitService.GetByIdAsync(id, ct);
+        if (habit is null)
+            return NotFound($"Привычка {id} не найдена");
+
+        if (habit.UserId != user.Id.Value)
+            return Forbid();
+
+        var date = request.Date is not null
+            ? DateOnly.Parse(request.Date)
+            : DateOnly.FromDateTime(DateTime.UtcNow);
+
+        var isCompleted = request.IsCompleted ?? true;
+
+        if (date > DateOnly.FromDateTime(DateTime.UtcNow))
+            return BadRequest("Дата не может быть в будущем");
+
+        try
+        {
+            var result = await _habitService.LogAsync(new LogHabitCommand(user.Id.Value, id, date, isCompleted), ct);
+            return Ok(result);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Получить статистику привычки
+    /// </summary>
+    [HttpGet(ApiRoutesV1.HabitStats)]
+    public async Task<ActionResult<HabitStatsResponse>> GetStatsAsync(
+        Guid id,
+        [FromQuery] StatsPeriod? period,
+        CancellationToken ct)
+    {
+        var telegramId = GetTelegramId();
+        if (telegramId is null)
+            return BadRequest($"Заголовок {TelegramIdHeader} обязателен");
+
+        var user = await _userService.GetOrDefaultAsync(new GetUserQuery(null, TelegramId: telegramId), ct);
+        if (user?.Id is null)
+            return NotFound($"Пользователь с TelegramId {telegramId} не найден");
+
+        var habit = await _habitService.GetByIdAsync(id, ct);
+        if (habit is null)
+            return NotFound($"Привычка {id} не найдена");
+
+        if (habit.UserId != user.Id.Value)
+            return Forbid();
+
+        try
+        {
+            var stats = await _habitService.GetStatsAsync(
+                new GetHabitStatsQuery(user.Id.Value, id, period ?? StatsPeriod.All), ct);
+            return Ok(stats);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(ex.Message);
+        }
+    }
+
+    /// <summary>
+    /// Получить логи привычек
+    /// </summary>
+    [HttpGet(ApiRoutesV1.HabitLogs)]
+    public async Task<ActionResult<IReadOnlyList<HabitLogResponse>>> GetLogsAsync(
+        [FromQuery] Guid? habitId,
+        [FromQuery] DateOnly? fromDate,
+        [FromQuery] DateOnly? toDate,
+        CancellationToken ct)
+    {
+        var telegramId = GetTelegramId();
+        if (telegramId is null)
+            return BadRequest($"Заголовок {TelegramIdHeader} обязателен");
+
+        var user = await _userService.GetOrDefaultAsync(new GetUserQuery(null, TelegramId: telegramId), ct);
+        if (user?.Id is null)
+            return NotFound($"Пользователь с TelegramId {telegramId} не найден");
+
+        var logs = await _habitService.GetLogsAsync(
+            new GetHabitLogsQuery(user.Id.Value, habitId, fromDate, toDate), ct);
+        return Ok(logs);
+    }
+
     private string? GetTelegramId()
     {
         var value = Request.Headers[TelegramIdHeader].ToString();

@@ -12,7 +12,7 @@ public sealed class HabitServiceTests : TestsBase
 
     public HabitServiceTests()
     {
-        _sut = new HabitService(HabitRepositoryMock.Object);
+        _sut = new HabitService(HabitRepositoryMock.Object, HabitLogRepositoryMock.Object);
     }
 
     [Fact]

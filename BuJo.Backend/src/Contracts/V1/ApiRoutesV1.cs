@@ -16,5 +16,11 @@ public static class ApiRoutesV1
 
     public const string Habits = Root + "/habits";
 
+    public const string HabitLog = Habits + "/{id}/log";
+
+    public const string HabitStats = Habits + "/{id}/stats";
+
+    public const string HabitLogs = Habits + "/logs";
+
     #endregion
 }

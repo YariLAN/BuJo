@@ -29,6 +29,8 @@ public sealed class DataContext : DbContext
 
     public DbSet<Habit> Habits => Set<Habit>();
 
+    public DbSet<HabitLog> HabitLogs => Set<HabitLog>();
+
     public DbSet<TaskItem> Tasks => Set<TaskItem>();
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

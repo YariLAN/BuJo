@@ -2,6 +2,7 @@ using BuJo.TelegramBot.Handlers;
 using BuJo.TelegramBot.Handlers.Callbacks;
 using BuJo.TelegramBot.Handlers.Commands;
 using BuJo.TelegramBot.Handlers.Messages;
+using BuJo.TelegramBot.Handlers.Messages.Habits;
 using BuJo.TelegramBot.Services;
 using BuJo.TelegramBot.Services.Habits;
 using BuJo.TelegramBot.Services.Main;
@@ -43,6 +44,11 @@ public static class ServiceRegistry
         services.AddScoped<PendingActionMessageHandler>();
         services.AddScoped<IPendingInputHandler, ReminderTimeInputHandler>();
         services.AddScoped<IPendingInputHandler, HabitNameInputHandler>();
+        services.AddScoped<IPendingInputHandler, HabitSelectHandler>();
+        services.AddScoped<IPendingInputHandler, HabitLogDateInputHandler>();
+        services.AddScoped<IPendingInputHandler, StatsHabitSelectHandler>();
+
+        services.AddHostedService<HabitLogBackgroundService>();
 
         return services;
     }

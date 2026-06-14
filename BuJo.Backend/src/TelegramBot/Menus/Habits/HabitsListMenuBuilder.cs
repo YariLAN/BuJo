@@ -20,18 +20,27 @@ public static class HabitsListMenuBuilder
         else
         {
             var lines = habits.Select((h, i) => $"{i + 1}. {h.Name}");
-            text = "📋 Ваши привычки:\n" + string.Join("\n", lines);
+            text = "📋 Выберите привычку (введите номер):\n" + string.Join("\n", lines);
         }
 
-        var markup = new InlineKeyboardMarkup(new[]
+        var buttons = new List<List<InlineKeyboardButton>>
         {
-            new[]
-            {
+            ([
                 InlineKeyboardButton.WithCallbackData("➕ Добавить", HabitCallbacks.Add),
-                InlineKeyboardButton.WithCallbackData("🏠 Назад", MenuCallbacks.Main),
-            },
-        });
+            ])
+        };
 
-        return new MenuView(text, markup);
+        if (habits.Count > 0)
+        {
+            buttons.Add([
+                InlineKeyboardButton.WithCallbackData("📊 Статистика", HabitCallbacks.StatsSelect),
+            ]);
+        }
+
+        buttons.Add([
+            InlineKeyboardButton.WithCallbackData("🏠 Назад", MenuCallbacks.Main),
+        ]);
+
+        return new MenuView(text, new InlineKeyboardMarkup(buttons));
     }
 }
