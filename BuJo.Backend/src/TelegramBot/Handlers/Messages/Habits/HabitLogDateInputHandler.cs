@@ -25,7 +25,6 @@ public sealed class HabitLogDateInputHandler(
 
         if (!DateOnly.TryParse(text, out var date))
         {
-            // Try DD.MM.YYYY format
             if (!DateOnly.TryParseExact(text, "dd.MM.yyyy", out date) &&
                 !DateOnly.TryParseExact(text, "d.M.yyyy", out date))
             {
@@ -56,7 +55,7 @@ public sealed class HabitLogDateInputHandler(
             return;
         }
 
-        await habitsMenuService.MarkHabitAsync(userId, chatId, habitId.Value, date, true, ct);
+        await habitsMenuService.MarkHabitAsync(userId, chatId, habitId.Value, date, true, ct: ct);
     }
 
     private static Guid? ParseHabitId(string? payload)

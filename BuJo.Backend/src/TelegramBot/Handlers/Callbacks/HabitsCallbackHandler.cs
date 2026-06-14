@@ -75,8 +75,9 @@ public sealed class HabitsCallbackHandler : CallbackHandlerBase
             
             if (Guid.TryParse(habitIdStr, out var toggleHabitId))
             {
+                await _habitsMenuService.MarkHabitAsync(
+                    userId, chatId, toggleHabitId, today, true, fromChecklist: true, ct);
                 
-                await _habitsMenuService.MarkHabitAsync(userId, chatId, toggleHabitId, today, true, ct);
                 return;
             }
             
@@ -97,19 +98,21 @@ public sealed class HabitsCallbackHandler : CallbackHandlerBase
         switch (data)
         {
             case HabitCallbacks.MarkToday:
-                await _habitsMenuService.MarkHabitAsync(userId, chatId, habitIdFromPayload.Value, today, true, ct);
+                await _habitsMenuService.MarkHabitAsync(userId, chatId, habitIdFromPayload.Value, today, true, ct: ct);
                 return;
 
             case HabitCallbacks.MarkSkip:
-                await _habitsMenuService.MarkHabitAsync(userId, chatId, habitIdFromPayload.Value, today, false, ct);
+                await _habitsMenuService.MarkHabitAsync(userId, chatId, habitIdFromPayload.Value, today, false, ct: ct);
                 return;
 
             case HabitCallbacks.MarkYesterday:
-                await _habitsMenuService.MarkHabitAsync(userId, chatId, habitIdFromPayload.Value, today.AddDays(-1), true, ct);
+                await _habitsMenuService.MarkHabitAsync(userId, chatId, habitIdFromPayload.Value, today.AddDays(-1),
+                    true, ct: ct);
                 return;
 
             case HabitCallbacks.MarkDayBeforeYesterday:
-                await _habitsMenuService.MarkHabitAsync(userId, chatId, habitIdFromPayload.Value, today.AddDays(-2), true, ct);
+                await _habitsMenuService.MarkHabitAsync(userId, chatId, habitIdFromPayload.Value, today.AddDays(-2), 
+                    true, ct: ct);
                 return;
 
             case HabitCallbacks.MarkOtherDate:

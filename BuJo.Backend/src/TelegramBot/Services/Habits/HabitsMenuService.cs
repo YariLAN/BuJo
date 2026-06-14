@@ -69,12 +69,20 @@ internal sealed class HabitsMenuService(
             payload: habitId.ToString(), ct);
     }
 
-    public async Task MarkHabitAsync(Guid userId, long chatId, Guid habitId, DateOnly date, bool isCompleted, CancellationToken ct)
+    public async Task MarkHabitAsync(
+        Guid userId, 
+        long chatId, 
+        Guid habitId, 
+        DateOnly date, 
+        bool isCompleted, 
+        bool fromChecklist, 
+        CancellationToken ct)
     {
         try
         {
             var result = await habitService.LogAsync(new LogHabitCommand(userId, habitId, date, isCompleted), ct);
-            await ShowMarkResultAsync(userId, chatId, result.HabitName ?? "Привычка", date, isCompleted, ct);
+            await ShowMarkResultAsync(userId, chatId, result.HabitName ?? "Привычка", date, isCompleted,
+                recreate: fromChecklist, ct);
         }
         catch (ArgumentException ex)
         {
@@ -86,10 +94,22 @@ internal sealed class HabitsMenuService(
         }
     }
 
-    public async Task ShowMarkResultAsync(Guid userId, long chatId, string habitName, DateOnly date, bool isCompleted, CancellationToken ct)
+    public async Task ShowMarkResultAsync(
+        Guid userId, 
+        long chatId, 
+        string habitName, 
+        DateOnly date, 
+        bool isCompleted, 
+        bool recreate, 
+        CancellationToken ct)
     {
         var view = HabitMenuBuilder.BuildMarkResult(habitName, date, isCompleted);
-        await renderer.EditAsync(userId, chatId, view, ct);
+        
+        if (recreate)
+            await renderer.RecreateAsync(userId, chatId, view, ct);
+        else
+            await renderer.EditAsync(userId, chatId, view, ct);
+            
         await userBotStateService.ClearPendingActionAsync(userId, chatId, ct);
     }
 

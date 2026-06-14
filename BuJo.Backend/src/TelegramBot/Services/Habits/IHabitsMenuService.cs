@@ -38,12 +38,26 @@ public interface IHabitsMenuService
     /// <summary>
     /// Отметить привычку за указанную дату
     /// </summary>
-    Task MarkHabitAsync(Guid userId, long chatId, Guid habitId, DateOnly date, bool isCompleted, CancellationToken ct);
+    Task MarkHabitAsync(
+        Guid userId, 
+        long chatId, 
+        Guid habitId, 
+        DateOnly date, 
+        bool isCompleted, 
+        bool fromChecklist = false,
+        CancellationToken ct = default);
 
     /// <summary>
     /// Показать результат отметки
     /// </summary>
-    Task ShowMarkResultAsync(Guid userId, long chatId, string habitName, DateOnly date, bool isCompleted, CancellationToken ct);
+    Task ShowMarkResultAsync(
+        Guid userId, 
+        long chatId, 
+        string habitName, 
+        DateOnly date, 
+        bool isCompleted,
+        bool recreate = false, 
+        CancellationToken ct = default);
 
     /// <summary>
     /// Открыть экран выбора привычки для статистики
