@@ -16,8 +16,4 @@
         <ProjectReference Include="..\Application\Application.csproj" />
         <ProjectReference Include="..\Common\Extensions\Extensions.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Handlers\Messages\" />
-    </ItemGroup>
 </Project>

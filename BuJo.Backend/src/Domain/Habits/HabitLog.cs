@@ -28,6 +28,11 @@ public sealed class HabitLog
     
     public bool IsCompleted { get; private set; }
 
+    public void SetCompleted(bool isCompleted)
+    {
+        IsCompleted = isCompleted;
+    }
+
     public static HabitLog Create(Guid habitId, DateOnly date, bool isCompleted)
         => new(Guid.NewGuid(), habitId, date, isCompleted);
 }

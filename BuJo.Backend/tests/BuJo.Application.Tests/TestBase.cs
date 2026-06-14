@@ -17,6 +17,8 @@ public abstract class TestsBase
 
     protected readonly Mock<IHabitRepository> HabitRepositoryMock;
 
+    protected readonly Mock<IHabitLogRepository> HabitLogRepositoryMock;
+
     // Mocks for services
     protected readonly Mock<IUserService> UserServiceMock;
     protected readonly Mock<IUserBotStateService> UserBotStateServiceMock;
@@ -30,6 +32,7 @@ public abstract class TestsBase
         HabitRepositoryMock = new Mock<IHabitRepository>();
         UserServiceMock = new Mock<IUserService>();
         UserBotStateServiceMock = new Mock<IUserBotStateService>();
+        HabitLogRepositoryMock = new Mock<IHabitLogRepository>();
     }
 
     /// <summary>

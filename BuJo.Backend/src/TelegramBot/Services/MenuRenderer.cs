@@ -58,6 +58,19 @@ internal sealed class MenuRenderer(
         await SendAndSaveAsync(userId, chatId, view, ct);
     }
 
+    public async Task DeleteMessage(Guid userId, long chatId, int messageId, CancellationToken ct)
+    {
+        try
+        {
+            await botClient.DeleteMessage(chatId, messageId, ct);
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "Failed to delete previous menu message {MessageId} for user {UserId}",
+                messageId, userId);
+        } 
+    }
+
     private async Task SendAndSaveAsync(Guid userId, long chatId, MenuView view, CancellationToken ct)
     {
         var sent = await botClient.SendMessage(

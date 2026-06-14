@@ -24,4 +24,53 @@ public interface IHabitsMenuService
     /// Показать ошибку валидации названия, не сбрасывая ожидание ввода
     /// </summary>
     Task ShowValidationErrorAsync(Guid userId, long chatId, string error, CancellationToken ct);
+
+    /// <summary>
+    /// Открыть подменю конкретной привычки (отметить/статистика/назад)
+    /// </summary>
+    Task OpenHabitAsync(Guid userId, long chatId, int inputMessageId, Guid habitId, CancellationToken ct);
+
+    /// <summary>
+    /// Открыть выбор даты для отметки привычки
+    /// </summary>
+    Task OpenDatePickerAsync(Guid userId, long chatId, Guid habitId, CancellationToken ct);
+
+    /// <summary>
+    /// Отметить привычку за указанную дату
+    /// </summary>
+    Task MarkHabitAsync(
+        Guid userId, 
+        long chatId, 
+        Guid habitId, 
+        DateOnly date, 
+        bool isCompleted, 
+        bool fromChecklist = false,
+        CancellationToken ct = default);
+
+    /// <summary>
+    /// Показать результат отметки
+    /// </summary>
+    Task ShowMarkResultAsync(
+        Guid userId, 
+        long chatId, 
+        string habitName, 
+        DateOnly date, 
+        bool isCompleted,
+        bool recreate = false, 
+        CancellationToken ct = default);
+
+    /// <summary>
+    /// Открыть экран выбора привычки для статистики
+    /// </summary>
+    Task OpenStatsSelectionAsync(Guid userId, long chatId, CancellationToken ct);
+
+    /// <summary>
+    /// Показать статистику для конкретной привычки
+    /// </summary>
+    Task OpenStatsForHabitAsync(Guid userId, long chatId, Guid habitId, CancellationToken ct);
+
+    /// <summary>
+    /// Показать подтверждение чек-листа (вечернее напоминание)
+    /// </summary>
+    Task ShowChecklistConfirmedAsync(Guid userId, long chatId, CancellationToken ct);
 }

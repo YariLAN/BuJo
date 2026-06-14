@@ -1,5 +1,3 @@
-using BuJo.Domain.Accounting;
-
 namespace BuJo.TelegramBot.Menus.Main;
 
 /// <summary>

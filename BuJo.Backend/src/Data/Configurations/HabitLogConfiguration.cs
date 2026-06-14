@@ -10,6 +10,13 @@ internal sealed class HabitLogConfiguration : IEntityTypeConfiguration<HabitLog>
     {
         builder.HasKey(hl => hl.Id);
 
+        builder.HasIndex(hl => new { hl.HabitId, hl.Date });
+
+        builder.HasIndex(hl => hl.Date);
+
+        builder.Property(hl => hl.IsCompleted)
+            .HasDefaultValue(false);
+
         builder.HasOne(hl => hl.Habit)
             .WithMany(h => h.Logs)
             .HasForeignKey(hl => hl.HabitId);
