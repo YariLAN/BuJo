@@ -18,13 +18,16 @@ internal sealed class HabitService : IHabitService
 
     public async Task<HabitResponse> CreateAsync(CreateHabitCommand command, CancellationToken ct)
     {
-        var name = (command.Name ?? string.Empty).Trim();
+        var name = command.Name.Trim();
 
-        if (name.Length == 0)
-            throw new ArgumentException("Название привычки не может быть пустым", nameof(command));
-
-        if (name.Length > NameMaxLength)
-            throw new ArgumentException($"Название привычки не может быть длиннее {NameMaxLength} символов", nameof(command));
+        switch (name.Length)
+        {
+            case 0:
+                throw new ArgumentException("Название привычки не может быть пустым", nameof(command));
+            case > NameMaxLength:
+                throw new ArgumentException($"Название привычки не может быть длиннее {NameMaxLength} символов",
+                    nameof(command));
+        }
 
         var duplicateExists = await _habitRepository.AnyBySpecAsync(
             new GetHabitsSpecification(new GetHabitsQuery(command.UserId, IncludeArchived: false, Name: name)),
@@ -65,7 +68,7 @@ internal sealed class HabitService : IHabitService
             throw new InvalidOperationException("Привычка не принадлежит текущему пользователю");
 
         var existing = await _habitLogRepository.FirstOrDefaultBySpecAsync(
-            new HabitLogByHabitAndDateSpec(command.HabitId, command.Date), ct);
+            new GetHabitLogBySpecification(command.HabitId, specificDate: command.Date), ct);
 
         if (existing is not null)
         {
@@ -83,6 +86,7 @@ internal sealed class HabitService : IHabitService
     public async Task<HabitStatsResponse> GetStatsAsync(GetHabitStatsQuery query, CancellationToken ct)
     {
         var habit = await _habitRepository.GetByIdAsync(query.HabitId, ct);
+        
         if (habit is null)
             throw new InvalidOperationException($"Привычка с ID {query.HabitId} не найдена");
 
@@ -92,7 +96,7 @@ internal sealed class HabitService : IHabitService
         var (fromDate, toDate) = GetDateRange(query.Period);
 
         var logs = await _habitLogRepository.ListBySpecAsync(
-            new HabitLogByHabitDateRangeSpec(query.HabitId, fromDate, toDate), ct);
+            new GetHabitLogBySpecification(query.HabitId, fromDate: fromDate, toDate: toDate), ct);
 
         var completedLogs = logs.Where(l => l.IsCompleted).OrderBy(l => l.Date).ToList();
 
@@ -112,8 +116,7 @@ internal sealed class HabitService : IHabitService
                 g.Count()))
             .OrderBy(m => m.Year).ThenBy(m => m.Month)
             .ToList();
-
-        // Streak calculation
+        
         var streak = 0;
         var bestStreak = 0;
         DateOnly? prevDate = null;
@@ -170,33 +173,16 @@ internal sealed class HabitService : IHabitService
 
     public async Task<IReadOnlyList<HabitLogResponse>> GetLogsAsync(GetHabitLogsQuery query, CancellationToken ct)
     {
-        List<HabitLog> logs;
+        var logs = await _habitLogRepository.ListBySpecAsync(
+            new GetHabitLogBySpecification(
+                query.HabitId, 
+                userId: query.UserId,
+                fromDate: query.FromDate,
+                toDate: query.ToDate), ct);
 
-        if (query.HabitId.HasValue)
-        {
-            if (query.FromDate.HasValue && query.ToDate.HasValue)
-            {
-                logs = await _habitLogRepository.ListBySpecAsync(
-                    new HabitLogByHabitDateRangeSpec(query.HabitId.Value, query.FromDate.Value, query.ToDate.Value), ct);
-            }
-            else
-            {
-                logs = await _habitLogRepository.ListBySpecAsync(
-                    new HabitLogByHabitSpec(query.HabitId.Value), ct);
-            }
-        }
-        else if (query.FromDate.HasValue && query.ToDate.HasValue)
-        {
-            logs = await _habitLogRepository.ListBySpecAsync(
-                new HabitLogByUserDateRangeSpec(query.UserId, query.FromDate.Value, query.ToDate.Value), ct);
-        }
-        else
-        {
-            logs = await _habitLogRepository.ListBySpecAsync(
-                new HabitLogByUserSpec(query.UserId), ct);
-        }
-
-        return logs.Select(l => l.ToResponse(l.Habit?.Name)).ToList();
+        return logs
+            .Select(l => l.ToResponse(l.Habit.Name))
+            .ToList();
     }
 
     private static (DateOnly From, DateOnly To) GetDateRange(StatsPeriod period)
@@ -206,10 +192,14 @@ internal sealed class HabitService : IHabitService
         return period switch
         {
             StatsPeriod.Week => (today.AddDays(-(int)today.DayOfWeek), today.AddDays(6 - (int)today.DayOfWeek)),
+
             StatsPeriod.Month => (new DateOnly(today.Year, today.Month, 1),
                 new DateOnly(today.Year, today.Month, DateTime.DaysInMonth(today.Year, today.Month))),
+
             StatsPeriod.Quarter => (today.AddMonths(-3), today),
+
             StatsPeriod.All => (DateOnly.MinValue, today),
+
             _ => (new DateOnly(today.Year, today.Month, 1),
                 new DateOnly(today.Year, today.Month, DateTime.DaysInMonth(today.Year, today.Month))),
         };

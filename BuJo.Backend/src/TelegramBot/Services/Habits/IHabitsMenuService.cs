@@ -28,7 +28,7 @@ public interface IHabitsMenuService
     /// <summary>
     /// Открыть подменю конкретной привычки (отметить/статистика/назад)
     /// </summary>
-    Task OpenHabitMenuAsync(Guid userId, long chatId, Guid habitId, CancellationToken ct);
+    Task OpenHabitAsync(Guid userId, long chatId, int inputMessageId, Guid habitId, CancellationToken ct);
 
     /// <summary>
     /// Открыть выбор даты для отметки привычки
@@ -54,4 +54,9 @@ public interface IHabitsMenuService
     /// Показать статистику для конкретной привычки
     /// </summary>
     Task OpenStatsForHabitAsync(Guid userId, long chatId, Guid habitId, CancellationToken ct);
+
+    /// <summary>
+    /// Показать подтверждение чек-листа (вечернее напоминание)
+    /// </summary>
+    Task ShowChecklistConfirmedAsync(Guid userId, long chatId, CancellationToken ct);
 }

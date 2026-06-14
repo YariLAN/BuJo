@@ -46,6 +46,10 @@ public sealed class HabitsCallbackHandler : CallbackHandlerBase
             case HabitCallbacks.BackToList:
                 await _habitsMenuService.OpenListAsync(userId, chatId, ct);
                 return;
+            
+            case HabitCallbacks.ConfirmChecklist:
+                await _habitsMenuService.ShowChecklistConfirmedAsync(userId, chatId, ct);
+                return;
         }
         
         var statsPrefix = HabitCallbacks.Prefix + ":stats_";
@@ -63,6 +67,23 @@ public sealed class HabitsCallbackHandler : CallbackHandlerBase
             return;
         }
         
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        
+        if (data.StartsWith(HabitCallbacks.ToggleHabit, StringComparison.Ordinal))
+        {
+            var habitIdStr = data[HabitCallbacks.ToggleHabit.Length..];
+            
+            if (Guid.TryParse(habitIdStr, out var toggleHabitId))
+            {
+                
+                await _habitsMenuService.MarkHabitAsync(userId, chatId, toggleHabitId, today, true, ct);
+                return;
+            }
+            
+            _logger.LogWarning("Invalid habitId in toggle callback: {Data}", data);
+            return;
+        }
+        
         var state = await _userBotStateService.GetOrCreateAsync(userId, chatId, ct);
         
         var habitIdFromPayload = ExtractHabitIdFromPayload(state.PendingPayload);
@@ -72,8 +93,6 @@ public sealed class HabitsCallbackHandler : CallbackHandlerBase
             _logger.LogWarning("No habitId in payload for callback: {Data}", data);
             return;
         }
-
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
         switch (data)
         {

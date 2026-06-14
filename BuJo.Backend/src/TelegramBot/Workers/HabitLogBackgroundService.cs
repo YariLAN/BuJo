@@ -50,26 +50,21 @@ internal sealed class HabitLogBackgroundService(
         var botClient = scope.ServiceProvider.GetRequiredService<ITelegramBotClient>();
 
         var now = DateTimeOffset.UtcNow;
-        var currentTime = TimeOnly.FromDateTime(now.DateTime);
+        var currentTime = TimeOnly.FromDateTime(now.LocalDateTime);
 
         logger.LogDebug("Проверка пользователей для времени {Time}", currentTime);
-
-        // Get all users — we need to find those whose ReminderEveningTime matches
-        // This is a simplified approach; for production, a DB query would be more efficient
-        // For now we use the existing query infrastructure
+        
         var allUsers = await GetAllUsersWithEveningReminderAsync(userRepository, ct);
 
         foreach (var user in allUsers)
         {
             if (user.ReminderEveningTime is null)
                 continue;
-
-            // Check if current minute matches reminder time
+            
             if (user.ReminderEveningTime.Value.Hour != currentTime.Hour ||
                 user.ReminderEveningTime.Value.Minute != currentTime.Minute)
                 continue;
-
-            // Check if user has any habits
+            
             var habits = await habitService.GetListAsync(new GetHabitsQuery(user.Id), ct);
             if (habits.Count == 0)
                 continue;
@@ -82,7 +77,6 @@ internal sealed class HabitLogBackgroundService(
     private static async Task<IReadOnlyList<User>> GetAllUsersWithEveningReminderAsync(
         IUserRepository userRepository, CancellationToken ct)
     {
-        // Use the specification to get users with evening reminder set
         var spec = new UsersWithEveningReminderSpec();
         var users = await userRepository.ListAsync(spec, ct);
         return users;
@@ -114,13 +108,13 @@ internal sealed class HabitLogBackgroundService(
             keyboard.Add([
                 Telegram.Bot.Types.ReplyMarkups.InlineKeyboardButton.WithCallbackData(
                     $"✅ {habit.Name}",
-                    $"{HabitCallbacks.Prefix}:select_{habit.Id}"),
+                    $"{HabitCallbacks.ToggleHabit}{habit.Id}"),
             ]);
         }
 
         keyboard.Add([
             Telegram.Bot.Types.ReplyMarkups.InlineKeyboardButton.WithCallbackData(
-                "✅ Всё отметил(а)", "habits:checklist_done"),
+                "Подтвердить", HabitCallbacks.ConfirmChecklist),
         ]);
 
         try

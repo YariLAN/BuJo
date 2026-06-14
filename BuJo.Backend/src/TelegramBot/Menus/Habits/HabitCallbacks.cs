@@ -59,4 +59,14 @@ public static class HabitCallbacks
     /// Назад к списку привычек
     /// </summary>
     public const string BackToList = Prefix + ":back_to_list";
+
+    /// <summary>
+    /// Переключить отметку привычки в чек-листе (вечернее напоминание)
+    /// </summary>
+    public const string ToggleHabit = Prefix + ":toggle_";
+
+    /// <summary>
+    /// Подтвердить чек-лист
+    /// </summary>
+    public const string ConfirmChecklist = Prefix + ":checklist_done";
 }

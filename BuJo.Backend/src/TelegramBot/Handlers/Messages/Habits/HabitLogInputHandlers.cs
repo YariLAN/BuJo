@@ -38,6 +38,6 @@ public sealed class HabitSelectHandler(
         }
 
         var selected = habits[index - 1];
-        await habitsMenuService.OpenHabitMenuAsync(userId, chatId, selected.Id!.Value, ct);
+        await habitsMenuService.OpenHabitAsync(userId, chatId, message.Id, selected.Id!.Value, ct);
     }
 }

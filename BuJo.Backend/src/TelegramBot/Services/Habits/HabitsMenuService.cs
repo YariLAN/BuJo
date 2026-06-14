@@ -1,8 +1,10 @@
 using BuJo.Application.Accounting;
 using BuJo.Application.Habits;
-using BuJo.Contracts.V1.Habits;
 using BuJo.Domain.Accounting;
+using BuJo.TelegramBot.Menus;
 using BuJo.TelegramBot.Menus.Habits;
+using BuJo.TelegramBot.Menus.Main;
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace BuJo.TelegramBot.Services.Habits;
 
@@ -18,7 +20,7 @@ internal sealed class HabitsMenuService(
         var view = HabitsListMenuBuilder.Build(habits);
 
         await renderer.EditAsync(userId, chatId, view, ct);
-        await userBotStateService.SetPendingActionAsync(userId, chatId, PendingAction.AwaitingHabitSelect, payload: null, ct);
+        await userBotStateService.SetPendingActionAsync(userId, chatId, PendingAction.AwaitingHabitSelect, null, ct);
     }
 
     public async Task OpenCreatePromptAsync(Guid userId, long chatId, CancellationToken ct)
@@ -40,12 +42,10 @@ internal sealed class HabitsMenuService(
     public async Task ShowValidationErrorAsync(Guid userId, long chatId, string error, CancellationToken ct)
     {
         var view = HabitCreatePromptBuilder.Build(error);
-
         await renderer.EditAsync(userId, chatId, view, ct);
-        // PendingAction сохраняется — пользователь может ввести повторно
     }
 
-    public async Task OpenHabitMenuAsync(Guid userId, long chatId, Guid habitId, CancellationToken ct)
+    public async Task OpenHabitAsync(Guid userId, long chatId, int inputMessageId, Guid habitId, CancellationToken ct)
     {
         var habit = await habitService.GetByIdAsync(habitId, ct);
         if (habit is null)
@@ -54,8 +54,8 @@ internal sealed class HabitsMenuService(
             return;
         }
 
-        var view = HabitMenuBuilder.Build(habit.ToResponse());
-        await renderer.EditAsync(userId, chatId, view, ct);
+        await renderer.DeleteMessage(userId, chatId, inputMessageId, ct);
+        await renderer.EditAsync(userId, chatId, HabitMenuBuilder.Build(habit.ToResponse()), ct);
         
         await userBotStateService.SetPendingActionAsync(userId, chatId, PendingAction.None,
             payload: habitId.ToString(), ct);
@@ -63,8 +63,8 @@ internal sealed class HabitsMenuService(
 
     public async Task OpenDatePickerAsync(Guid userId, long chatId, Guid habitId, CancellationToken ct)
     {
-        var view = DatePickerMenuBuilder.Build();
-        await renderer.EditAsync(userId, chatId, view, ct);
+        await renderer.EditAsync(userId, chatId, DatePickerMenuBuilder.Build(), ct);
+        
         await userBotStateService.SetPendingActionAsync(userId, chatId, PendingAction.None,
             payload: habitId.ToString(), ct);
     }
@@ -98,12 +98,13 @@ internal sealed class HabitsMenuService(
         var habits = await habitService.GetListAsync(new GetHabitsQuery(userId), ct);
         if (habits.Count == 0)
         {
-            await ShowValidationErrorAsync(userId, chatId, "У вас пока нет привычек. Сначала создайте хотя бы одну.", ct);
+            await ShowValidationErrorAsync(userId, chatId, 
+                "У вас пока нет привычек. Сначала создайте хотя бы одну.", ct);
+            
             return;
         }
-
-        var view = HabitsSelectionMenuBuilder.BuildForStats(habits);
-        await renderer.EditAsync(userId, chatId, view, ct);
+        
+        await renderer.EditAsync(userId, chatId, HabitsSelectionMenuBuilder.BuildForStats(habits), ct);
         await userBotStateService.ClearPendingActionAsync(userId, chatId, ct);
     }
 
@@ -123,5 +124,17 @@ internal sealed class HabitsMenuService(
         {
             await ShowValidationErrorAsync(userId, chatId, ex.Message, ct);
         }
+    }
+
+    public async Task ShowChecklistConfirmedAsync(Guid userId, long chatId, CancellationToken ct)
+    {
+        await renderer.EditAsync(userId, chatId, new MenuView(
+            "✅ Спасибо! Все отметки сохранены.", 
+            new InlineKeyboardMarkup(
+                [[InlineKeyboardButton.WithCallbackData("🏠 Меню", MenuCallbacks.Main)]]
+            )), 
+            ct);
+        
+        await userBotStateService.ClearPendingActionAsync(userId, chatId, ct);
     }
 }
